@@ -1,0 +1,825 @@
+# Install/Uninstall functions for RESTfm on OSX.
+#
+# Copyright (C) 2016, Goya Pty. Ltd.
+# All rights reserved.
+
+# A general use one second granular timestamp.
+TIMESTAMP=$(date +%Y%m%d%H%M%S)
+
+### Helper functions ###
+
+# Cross platform path resolving function. Original version by user "arifsaha":
+# http://www.linuxquestions.org/questions/programming-9/bash-script-return-full-path-and-filename-680368/page3.html
+function abspath {
+    if [[ -d "$1" ]]; then
+        pushd "$1" >/dev/null
+        pwd
+        popd >/dev/null
+    elif [[ -e $1 ]]; then
+        pushd $(dirname $1) >/dev/null
+        echo $(pwd)/$(basename $1)
+        popd >/dev/null
+    else
+        echo $1 does not exist! >&2
+        return 127
+    fi
+}
+
+# Bash equivalent to PHP's rawurlencode() function. Original version by
+# user "Orwellophile":
+# http://stackoverflow.com/questions/296536/how-to-urlencode-data-for-curl-command#answer-10660730
+rawurlencode() {
+  local string="${1}"
+  local strlen=${#string}
+  local encoded=""
+  local pos=0
+  local c=""
+  local o=""
+
+  for (( pos=0 ; pos<strlen ; pos++ )); do
+     c=${string:$pos:1}
+     case "$c" in
+        [-_.~a-zA-Z0-9] )
+            o="${c}"
+            ;;
+        * )
+            printf -v o '%%%02x' "'$c"
+            ;;
+     esac
+     encoded+="${o}"
+  done
+  echo "${encoded}"
+}
+
+
+### Output functions ###
+
+show_Header () {
+    cat <<EOCAT
+
++-----------------------------------------------------------------------------+
+|                       RESTfm installer for Mac OS X                         |
++-----------------------------------------------------------------------------+
+
+EOCAT
+}
+
+show_HeaderUninstall () {
+    cat <<EOCAT
+
++-----------------------------------------------------------------------------+
+|                       RESTfm uninstaller for Mac OS X                       |
++-----------------------------------------------------------------------------+
+
+EOCAT
+}
+
+setup_Logfile () {
+    # Log all output to file.
+    local LOGFILE="${BASEDIR}/${ARGV0}.${TIMESTAMP}.log"
+    # DEBUG
+    #LOGFILE="foo.log"
+    # Truncate log file, and redirect STDOUT and STDERR through tee.
+    > "$LOGFILE"
+    exec >  >(tee -ia "$LOGFILE")
+    exec 2> >(tee -ia "$LOGFILE" >&2)
+
+    echo "All output is logged to: \"${LOGFILE}\""
+}
+
+on_Break () {
+    echo
+    echo "** User has interrupted script."
+    exit 1
+}
+
+setup_Traps () {
+    trap on_Break SIGINT
+}
+
+### Check-or-die functions ###
+
+##
+# Check:
+#   - that we are running on Mac OS X.
+#     - Note: Officially now macOS, but sw_vers still returns "Mac OS X"
+#   - that we are on a supported version of Mac OS X.
+#   - that we are not running on Mac OS X Server Edition.
+check_OSXVersion() {
+    local MSGPREFIX='Check Mac OS X version: '
+
+    # Ensure we have sw_vers, and we are Mac OS X.
+    local PRODUCTNAME=''
+    [ -x "`which sw_vers`" ] && PRODUCTNAME=`sw_vers -productName`
+    if [ "$PRODUCTNAME" != 'Mac OS X' ]; then
+        log_failure_msg "$MSGPREFIX Mac OS X not detected"
+        exit 1
+    fi
+
+    # Ensure we are on a supported version of Mac OS X.
+    local OSXVERSION=`sw_vers -productVersion`
+    # Trim off any patch version, e.g. 10.10.1 -> 10.10
+    OSXVERSION=`echo "${OSXVERSION}" | grep -Eo '^[0-9]+\.[0-9]+'`
+    case "$OSXVERSION" in
+        "10.12")
+            log_success_msg "$MSGPREFIX $OSXVERSION Sierra"
+            ;;
+        "10.11")
+            log_success_msg "$MSGPREFIX $OSXVERSION El Capitan"
+            ;;
+        "10.10")
+            log_success_msg "$MSGPREFIX $OSXVERSION Yosemite"
+            ;;
+        "10.9")
+            log_success_msg "$MSGPREFIX $OSXVERSION Mavericks"
+            ;;
+        *)
+            log_failure_msg "$MSGPREFIX $OSXVERSION, unsupported"
+            exit 1
+            ;;
+    esac
+
+    # Ensure we are not running on Mac OS X Server Edition.
+    if [ -e '/System/Library/CoreServices/ServerVersion.plist' ]; then
+        log_failure_msg 'Mac OS X Server Edition detected. This is not supported'
+        exit 1
+    fi
+}
+
+##
+# Check:
+#   - that FMS appears to be installed.
+#   - that FMS is a supported version.
+#   - that FMS has both WPE and PHP enabled.
+#
+# Initialises global variables:
+#   FMS_VERSION_MAJOR   - The FMS major version number.
+#   FMS_VERSION_MINOR   - The FMS minor version number.
+#   FMS_VERSION_PATCH   - The FMS patch version number.
+#
+check_FMSVersion() {
+    local MSGPREFIX='Check FMS version: '
+
+    local FMSADMIN_EXE='/Library/FileMaker Server/Database Server/bin/fmsadmin'
+    local FMSVERSION_XML='/Library/FileMaker Server/Web Publishing/conf/jwpc_prefs.xml'
+
+    # Ensure that FMS is installed on this system.
+    if [ ! -r "$FMSADMIN_EXE" ]; then
+        log_failure_msg "$MSGPREFIX FMS not detected"
+        exit 1
+    fi
+
+    # Ensure FMS is a supported version.
+    local FMS_VERSION=`xpath "$FMSVERSION_XML" '/jwpcconfig/build-settings/parameter[@name="product-version"]/text()' 2>/dev/null`
+    FMS_VERSION_MAJOR=$(echo "$FMS_VERSION" | cut -d . -f 1)
+    FMS_VERSION_MINOR=$(echo "$FMS_VERSION" | cut -d . -f 2)
+    FMS_VERSION_PATCH=$(echo "$FMS_VERSION" | cut -d . -f 3)
+    case "$FMS_VERSION_MAJOR" in
+        '13')
+            if [ $FMS_VERSION_MINOR -eq 0 -a $FMS_VERSION_PATCH -lt 5 ]; then
+                log_failure_msg "$MSGPREFIX $FMS_VERSION unsupported, 13.0v5 is minimum"
+                exit 1
+            fi
+            log_success_msg "$MSGPREFIX $FMS_VERSION"
+            ;;
+        '14'|'15')
+            log_success_msg "$MSGPREFIX $FMS_VERSION"
+            ;;
+        *)
+            log_failure_msg "$MSGPREFIX $FMS_VERSION, unsupported"
+            exit 1
+            ;;
+    esac
+}
+
+##
+# Check:
+#   - that the Apache version is supported.
+#
+# Initialises global variables:
+#   APACHE_VERSION - x.y Apache version.
+#   APACHE_CONF - Full path to Apache conf file with version suffix for FMS13+.
+#   APACHE_LISTEN - Port that Apache is listening on.
+#
+function check_ApacheVersion() {
+    local MSGPREFIX='Check Apache version: '
+
+    # Match usage in FMS /Library/FileMaker Server/HTTPServer/bin/httpdctl
+    APACHE_VERSION=$(/usr/sbin/httpd -version | head -1 | cut -d "/" -f 2 | cut -d "." -f 1,2)
+
+    APACHE_CONF="/Library/FileMaker Server/HTTPServer/conf/httpd.conf.${APACHE_VERSION}"
+
+    APACHE_LISTEN=$(grep '^Listen' "${APACHE_CONF}" | head -1 | sed -E 's/Listen[[:space:]]+([0-9]+)/\1/')
+
+    case "$APACHE_VERSION" in
+        '2.2'|'2.4')
+            log_success_msg "$MSGPREFIX $APACHE_VERSION (Listen port: ${APACHE_LISTEN})"
+            ;;
+        *)
+            log_failure_msg "$MSGPREFIX $APACHE_VERSION, unsupported"
+            exit 1
+            ;;
+    esac
+}
+
+##
+# Check:
+#   - that FMS has both WPE and PHP enabled.
+#
+check_FMS_WPE_PHP() {
+    local MSGPREFIX='Check FMS WPE and PHP: '
+
+    # Ensure that both WPE and PHP are enabled (only works on FMS14)
+    #local FMS_SERVER_CONFIG='/Library/FileMaker Server/Admin/conf/server_config.xml'
+    #local FMSWPEPHP=''
+    #FMSWPEPHP=`xpath "$FMS_SERVER_CONFIG" '//component[@name="WPE"]//technology[@name="PHP"]//parameter[@name="enabled"]/text()' 2>/dev/null`
+    #if [ "X${FMSWPEPHP}" != 'Xtrue' ]; then
+    #    log_failure_msg "FileMaker Server WPE and PHP not enabled"
+    #    exit 1
+    #fi
+
+    # Check PHP technology test:
+    curl -s "http://localhost:${APACHE_LISTEN}/fmi-test/phptest.php?lang=en" | grep -q "PHP connection to the FMServer_Sample database appears successful"
+    local RET=$?
+
+    if [ $RET != 0 ]; then
+        # Second chance, WPE and PHP might be up but the sample DB is closed,
+        # which is good enough for this test.
+        curl -s "http://localhost:${APACHE_LISTEN}/fmi-test/phptest.php?lang=en" | grep -q "FMServer_Sample database is not open"
+        RET=$?
+    fi
+
+    if [ $RET != 0 ]; then
+        log_failure_msg "${MSGPREFIX} could not complete php test."
+        echo
+        echo "Please check FileMaker Server deployment in Admin Console."
+        echo
+        exit 1
+    fi
+
+    log_success_msg "$MSGPREFIX success"
+}
+
+##
+# Check that we are in the correct location. i.e. in an immediate subdirectory
+# to /Library/FileMaker Server/HTTPServer/htdocs
+#
+# Initialises global variables:
+#   RESTFM_PATH_MD5     - Unique hash of RESTfm installation directory.
+#   RESTFM_DIRNAME      - Dirname part of RESTfm installation directory.
+#   RESTFM_BASENAME     - Basename part of RESTfm installation directory.
+#   RESTFM_BASENAME_URLENCODED  - As above but raw urlencoded.
+#
+check_Location() {
+    local MSGPREFIX='Check RESTfm location:'
+    local REQUIREDHTDOCSPATH='/Library/FileMaker Server/HTTPServer/htdocs'
+
+    # Search back up directory tree from $BASEDIR looking for RESTfm.php,
+    # then we know our RESTfm root directory.
+    local TESTROOT=$BASEDIR
+    local BAILOUT=10
+    local RESTFMROOT=''
+    while [ $BAILOUT -gt 0 ]; do
+        TESTROOT="${TESTROOT}/.."
+        if [ -r "${TESTROOT}/RESTfm.php" ]; then
+            RESTFMROOT=$TESTROOT
+            break
+        fi
+        BAILOUT=$(($BAILOUT - 1))
+    done
+    if [ -z "$RESTFMROOT" ]; then
+        log_failure_msg "$MSGPREFIX Unable to locate RESTfm.php"
+        exit 1
+    fi
+    RESTFMROOT=$(abspath "$RESTFMROOT")
+    RESTFM_PATH_MD5=`echo -n "${RESTFMROOT}" | md5`
+    RESTFM_DIRNAME=`dirname "$RESTFMROOT"`
+    RESTFM_BASENAME=`basename "$RESTFMROOT"`
+    RESTFM_BASENAME_URLENCODED=$(rawurlencode "${RESTFM_BASENAME}")
+
+    # Ensure that the $RESTFM_DIRNAME is $REQUIREDHTDOCSPATH
+    if [ "$RESTFM_DIRNAME" != "$REQUIREDHTDOCSPATH" ]; then
+        log_failure_msg "$MSGPREFIX not under FileMaker Server htdocs"
+        echo
+        echo "Please copy RESTfm folder to: \"$REQUIREDHTDOCSPATH\""
+        echo "Then re-run installer from that location."
+        echo
+        exit 1
+    fi
+
+    log_success_msg $MSGPREFIX $RESTFM_BASENAME
+}
+
+##
+# Check that we are root.
+#
+check_Privilege() {
+    local MSGPREFIX='Check administrator privilege:'
+
+    if [ "$EUID" != "0" ]; then
+        log_failure_msg "$MSGPREFIX No - ${LOGNAME}"
+        echo
+        echo 'Please try again using: sudo "'$0'"'
+        echo
+        exit 1
+    fi
+
+    log_success_msg "$MSGPREFIX Yes (${LOGNAME})"
+}
+
+##
+# Check the user answers Y or y, else abort.
+#
+check_Y() {
+    echo "$1"
+    local CONTINUE
+    read CONTINUE
+    if [ "X${CONTINUE}" != 'XY' -a "X${CONTINUE}" != 'Xy' ]; then
+        echo "++ user aborted with \"${CONTINUE}\"."
+        exit
+    fi
+}
+
+##
+# Check for configured RESTfm installs in FileMaker Server's Apache .conf file,
+# else abort.
+#
+# Reads globals:
+#   APACHE_CONF
+#
+# Initialises global variables:
+#   RESTFM_CONF_LIST    - An array of config_file_name/RESTfm_basename pairs in
+#                         consecutive indices.
+check_Installed() {
+    local MSGPREFIX='Checking for RESTfm installations:'
+    local EXTRADIRNAME="/Library/FileMaker Server/HTTPServer/conf/extra"
+    local SRC="${APACHE_CONF}"
+
+    # Initialise list.
+    RESTFM_CONF_LIST=()
+
+    # Scan the FMS Apache .conf for the installer's md5sum fingerprint.
+    local SCAN_RESTFMCONFNAME=''
+    local SCAN_RESTFM_DIRNAME=''
+    local SCAN_RESTFM_BASENAME=''
+    local INSTALLINDEX=1
+    for SCAN_RESTFMCONFNAME in `grep -Eo 'httpd-RESTfm\.([a-f0-9]{32})\.conf' "${SRC}"`; do
+        SCAN_RESTFM_BASENAME='Orphan entry. Webserver will not start until removed!'
+
+        # Extract actual RESTfm install basename from conf in "extra" directory.
+        if [ -r "${EXTRADIRNAME}/${SCAN_RESTFMCONFNAME}" ]; then
+            SCAN_RESTFM_DIRNAME=`grep -E '^<Directory\s+' "${EXTRADIRNAME}/${SCAN_RESTFMCONFNAME}" | head -n 1 | sed -E  's|^<Directory[[:space:]]+"([^"]+)">|\1|'`
+            SCAN_RESTFM_BASENAME=`basename "$SCAN_RESTFM_DIRNAME"`
+        fi
+
+        RESTFM_CONF_LIST+=("$SCAN_RESTFMCONFNAME")
+        RESTFM_CONF_LIST+=("$SCAN_RESTFM_BASENAME")
+
+        INSTALLINDEX=$(($INSTALLINDEX + 1))
+    done
+
+    if [ ${#RESTFM_CONF_LIST[@]} -eq 0 ]; then
+        log_failure_msg "${MSGPREFIX} none found"
+        exit 1
+    fi
+
+    log_success_msg "${MSGPREFIX} $((${INSTALLINDEX} - 1)) found"
+}
+
+##
+# Check the RESTfm report page for any errors.
+#
+check_RESTfmReport() {
+    local MSGPREFIX='Check RESTfm report'
+    log_daemon_msg "${MSGPREFIX}"
+
+    local URL="http://localhost:${APACHE_LISTEN}/${RESTFM_BASENAME_URLENCODED}/report.php"
+    log_progress_msg "${URL}"
+
+    curl -s -L "${URL}" | grep -q "RESTfm is working"
+    local RET=$?
+
+    if [ "$RET" != "0" ]; then
+        log_end_msg 1
+        echo
+        echo "Please use a browser to inspect report: $URL"
+        echo
+        exit 1
+    fi
+
+    # OK
+    log_end_msg 0
+}
+
+### Utility Functions ###
+
+##
+# Install the appropriate Apache config from RESTfm/contrib.
+#
+install_RESTfmApacheConfig() {
+    local MSGPREFIX="Install RESTfm Apache config:"
+    case "$APACHE_VERSION" in
+        '2.2')
+            local SRC="${BASEDIR}/../httpd-RESTfm.FMS13.Apache22.OSX.conf"
+            ;;
+        '2.4')
+            local SRC="${BASEDIR}/../httpd-RESTfm.FMS13.Apache24.OSX.conf"
+            ;;
+    esac
+    local DST="/Library/FileMaker Server/HTTPServer/conf/extra"
+    local DSTFILENAME="${DST}/httpd-RESTfm.${RESTFM_PATH_MD5}.conf"
+
+    # Clobbering any existing conf for this RESTfm fully qualified pathname.
+    echo "# ${TIMESTAMP} - ${ARGV0} - ${LOGNAME}" > "$DSTFILENAME"
+    local RET=$?
+
+    if [ "$RET" != "0" ]; then
+        log_failure_msg "${MSGPREFIX} error initialising file"
+        exit 1
+    fi
+
+    # Use sed to update paths in config.
+    sed "s|/Library/FileMaker Server/HTTPServer/htdocs/RESTfm|${RESTFM_DIRNAME}/${RESTFM_BASENAME}|" "$SRC" | \
+    sed "s|/Library/FileMaker Server/HTTPServer/htdocs/httpsRoot/RESTfm|${RESTFM_DIRNAME}/httpsRoot/${RESTFM_BASENAME}|" >> \
+    "$DSTFILENAME"
+    local RET=$?
+
+    if [ "$RET" != "0" ]; then
+        log_failure_msg "${MSGPREFIX} error updating paths"
+        exit 1
+    fi
+
+    log_success_msg "${MSGPREFIX} success"
+}
+
+##
+# Update the FileMaker Server htdocs/httpsRoot/ symlink.
+#
+install_HttpsRootSymlink(){
+    local MSGPREFIX="Install httpsRoot symlink:"
+    local SRC="${RESTFM_DIRNAME}/${RESTFM_BASENAME}"
+    local DST="${RESTFM_DIRNAME}/httpsRoot/${RESTFM_BASENAME}"
+
+    # If $DST exists.
+    if [ -a "$DST" ]; then
+        # If $DST is a symlink.
+        if [ -h "$DST" ]; then
+            # Remove existing symlink.
+            rm -f "$DST"
+            local RET=$?
+            if [ "$RET" != "0" ]; then
+                log_warning_msg "${MSGPREFIX} unable to remove existing"
+                return
+            fi
+        else
+            # Else we don't touch this, just issue a warning.
+            log_warning_msg "${MSGPREFIX} path already exists"
+            return
+        fi
+    fi
+
+    # If we get here, we can create the new symlink.
+    ln -s "$SRC" "$DST"
+    local RET=$?
+    if [ "$RET" != "0" ]; then
+        log_warning_msg "${MSGPREFIX} failed to create"
+        exit 1
+    fi
+
+    log_success_msg "${MSGPREFIX} success"
+}
+
+##
+# Update the FMS Apache .conf file to include the RESTfm .conf
+#
+# Reads globals:
+#   APACHE_CONF
+#
+update_FMSApacheConfig() {
+    local MSGPREFIX="Update FMS Apache config:"
+    local SRC="${APACHE_CONF}"
+    local DST="${SRC}.RESTfm.${TIMESTAMP}.bak"
+    local INCLUDESTR="Include conf/extra/httpd-RESTfm.${RESTFM_PATH_MD5}.conf"
+
+    # Check if we have this entry already.
+    grep -q "$INCLUDESTR" "$SRC"
+    if [ "$?" == "0" ]; then
+        log_success_msg "${MSGPREFIX} already included"
+        return
+    fi
+
+    cp "${SRC}" "${DST}"
+    local RET=$?
+
+    if [ "$RET" != "0" ]; then
+        log_failure_msg "${MSGPREFIX} error backing up original file"
+        exit 1
+    fi
+
+    # Append include string to FMS Apache config.
+    echo "$INCLUDESTR" >> "${SRC}"
+
+    log_success_msg "${MSGPREFIX} success"
+}
+
+##
+# Stop FileMaker Server.
+#
+# Only used for FMS13 where it is not possible to effectively restart just
+# Apache.
+#
+stop_FMS() {
+    log_daemon_msg 'Stopping FileMaker Server'
+
+    launchctl stop com.filemaker.fms
+
+    local RET=0
+    while [ $RET -eq 0 ]; do
+        sleep 2
+        log_progress_msg "."
+        ps ax | grep "/FileMaker Server/Database Server/bin/fmserver_helperd -d" | grep -vq grep
+        RET=$?
+    done
+
+    log_end_msg 0
+}
+
+##
+# Start FileMaker Server.
+#
+# Only used for FMS13 where it is not possible to effectively restart just
+# Apache.
+#
+start_FMS() {
+    log_daemon_msg 'Starting FileMaker Server'
+
+    launchctl start com.filemaker.fms
+
+    local RET=1
+    while [ $RET -eq 1 ]; do
+        sleep 2
+        log_progress_msg "."
+        ps ax | grep "FileMaker Server/Web Publishing/publishing-engine/cwpc/bin/fmscwpc" | grep -vq grep
+        RET=$?
+    done
+
+    # We want to give WPE some time to settle otherwise any web queries
+    # appear to cause termination of httpd!!?!
+    local COUNT=3
+    while [ $COUNT -gt 0 ]; do
+        #log_progress_msg $COUNT
+        log_progress_msg "."
+        sleep 2
+        COUNT=$(($COUNT - 1))
+    done
+
+    log_end_msg 0
+}
+
+##
+# Stop and Start the FileMaker Server.
+#
+# Only used for FMS13 where it is not possible to effectively restart just
+# Apache.
+#
+restart_FMS() {
+
+    stop_FMS
+
+    start_FMS
+
+    log_daemon_msg 'Waiting for WPE to return'
+
+    local RET=1
+    while [ $RET -eq 1 ]; do
+        sleep 2
+        log_progress_msg "."
+        curl -s --connect-timeout 2 --max-time 4 "http://localhost:${APACHE_LISTEN}/fmi/xml/fmresultset.xml" | grep -q "FileMaker"
+        RET=$?
+        if [ $RET -eq 1 ]; then
+            # Check that Apache httpd is actually in process list, as
+            # sometimes it terminates unexpectedly!
+            ps ax | grep /usr/sbin/httpd | grep -q -i filemaker
+            RET=$?
+            if [ $RET -eq 1 ]; then
+                # Apache is dead! Restart all over again.
+                log_progress_msg "Apache httpd has terminated, trying again."
+                log_end_msg 255
+                restart_FMS
+                return
+            fi
+        fi
+
+    done
+
+    log_end_msg 0
+
+    sleep 1
+}
+
+##
+# Restart FMS Apache web server instance.
+#
+restart_FMSApache() {
+    case "$FMS_VERSION_MAJOR" in
+        "13")
+            # FMS 13 can't restart Apache, the whole FMS needs to go down!
+            restart_FMS
+            return
+            ;;
+    esac
+
+    log_daemon_msg 'Restarting Web Server'
+
+    # Use launchctl to do restart.
+    launchctl start com.filemaker.httpd.restart
+
+    # We want to give httpd some time to settle otherwise any web queries
+    # following this function might fail.
+    local COUNT=3
+    while [ $COUNT -gt 0 ]; do
+        log_progress_msg $COUNT
+        sleep 1
+        COUNT=$(($COUNT - 1))
+    done
+    log_end_msg 0
+}
+
+##
+# Update RESTfm .htaccess to set RewriteBase.
+#
+update_RESTfmHtaccess() {
+    local MSGPREFIX="Update RESTfm .htaccess:"
+    local HTACCESS="${RESTFM_DIRNAME}/${RESTFM_BASENAME}/.htaccess"
+
+    # Use sed to update RewriteBase.
+    sed -i.bak -E "s/^([[:space:]]*RewriteBase[[:space:]]*)(.*)$/\1\/${RESTFM_BASENAME_URLENCODED}/" "${HTACCESS}"
+    local RET=$?
+
+    if [ "$RET" != "0" ]; then
+        log_failure_msg "${MSGPREFIX} error updating RewriteBase"
+        exit 1
+    fi
+
+    log_success_msg "${MSGPREFIX} success"
+}
+
+##
+# Update RESTfm.ini.php
+#   - set baseURI.
+#   - set hostspec.
+#
+update_RESTfmIni() {
+    local MSGPREFIX="Update RESTfm.ini.php"
+    local RESTFMINI="${RESTFM_DIRNAME}/${RESTFM_BASENAME}/RESTfm.ini.php"
+
+    log_daemon_msg "${MSGPREFIX}"
+
+    # Use sed to update baseURI.
+    log_progress_msg "baseURI,"
+    sed -i.bak -E "s/^([[:space:]]*\'baseURI\'[[:space:]]*\=\>[[:space:]]*\')(.*)(\'[,[:space:]]*)/\1\/${RESTFM_BASENAME_URLENCODED}\3/" "${RESTFMINI}"
+    local RET=$?
+
+    if [ "$RET" != "0" ]; then
+        # fail
+        log_end_msg 1
+        exit 1
+    fi
+
+    # Use sed to update hostspec.
+    log_progress_msg "hostspec"
+    sed -i.bak -E "s/^([[:space:]]*\'hostspec\'[[:space:]]*\=\>[[:space:]]*\')(.*)(\'[,[:space:]]*)/\1http:\/\/127.0.0.1:${APACHE_LISTEN}\3/" "${RESTFMINI}"
+    local RET=$?
+
+    if [ "$RET" != "0" ]; then
+        # fail
+        log_end_msg 1
+        exit 1
+    fi
+
+    # OK
+    log_end_msg 0
+
+}
+
+##
+# Allow user to select which RESTfm to uninstall.
+#
+# Reads global variable: RESTFM_CONF_LIST
+#
+# Initialises global variables:
+#   RESTFM_UNINSTALL_CONF_NAME
+#   RESTFM_UNINSTALL_BASE_NAME
+#
+select_Uninstall() {
+    local CHOICES=()
+    local INDEX=1
+    while [ ${INDEX} -lt ${#RESTFM_CONF_LIST[@]} ]; do
+        CHOICES+=("${RESTFM_CONF_LIST[$INDEX]}")
+        INDEX=$(($INDEX + 2))
+    done
+
+    PS3="Select number to uninstall, any other characters will abort: "
+    local CHOICE
+    select CHOICE in "${CHOICES[@]}"; do
+        case $CHOICE in
+            '')
+                echo "++ user aborted with \"${REPLY}\"."
+                exit 1
+                ;;
+            *)
+                echo "Continuing with selection \"$REPLY) $CHOICE\""
+                break
+                ;;
+        esac
+    done
+
+    local INDEX=$(( ($REPLY - 1) * 2 ))
+    RESTFM_UNINSTALL_CONF_NAME=${RESTFM_CONF_LIST[$INDEX]}
+    RESTFM_UNINSTALL_BASE_NAME=${RESTFM_CONF_LIST[$(( $INDEX + 1 ))]}
+}
+
+##
+# Update the FMS Apache .conf file to remove the RESTfm .conf
+#
+# Reads globals:
+#   APACHE_CONF
+#   RESTFM_UNINSTALL_CONF_NAME
+#
+update_FMSApacheConfigRemove() {
+    local MSGPREFIX="Update FMS Apache config:"
+    local SRC="${APACHE_CONF}"
+    local DST="${SRC}.RESTfm.${TIMESTAMP}.bak"
+
+    cp "${SRC}" "${DST}"
+    local RET=$?
+
+    if [ "$RET" != "0" ]; then
+        log_failure_msg "${MSGPREFIX} error backing up original file"
+        exit 1
+    fi
+
+    # Remove RESTfm conf Include string from FMS Apache config.
+    sed -i -E "s/^.*${RESTFM_UNINSTALL_CONF_NAME}.*$//" "${SRC}"
+    local RET=$?
+
+    if [ "$RET" != "0" ]; then
+        log_failure_msg "${MSGPREFIX} error removing Include"
+        exit 1
+    fi
+
+    log_success_msg "${MSGPREFIX} updated"
+}
+
+##
+# Uninstall the Apache config in "extra" directory.
+#
+# Reads globals:
+#   RESTFM_UNINSTALL_CONF_NAME
+#
+uninstall_RESTfmApacheConfig() {
+    local MSGPREFIX="Uninstall RESTfm Apache config:"
+    local SRCDIR="/Library/FileMaker Server/HTTPServer/conf/extra"
+
+    # Use sed to update paths in config.
+    rm -f "${SRCDIR}/${RESTFM_UNINSTALL_CONF_NAME}"
+    local RET=$?
+
+    if [ "$RET" != "0" ]; then
+        log_failure_msg "${MSGPREFIX} error removing .conf"
+        exit 1
+    fi
+
+    log_success_msg "${MSGPREFIX} success"
+}
+
+##
+# Remove the FileMaker Server htdocs/httpsRoot/ symlink.
+#
+# Reads globals:
+#   RESTFM_UNINSTALL_BASE_NAME
+#
+uninstall_HttpsRootSymlink(){
+    local MSGPREFIX="Uninstall httpsRoot symlink:"
+    local DST="${RESTFM_DIRNAME}/httpsRoot/${RESTFM_UNINSTALL_BASE_NAME}"
+
+    # If $DST exists.
+    if [ -a "$DST" ]; then
+        # If $DST is a symlink.
+        if [ -h "$DST" ]; then
+            # Remove existing symlink.
+            rm -f "$DST"
+            local RET=$?
+            if [ "$RET" != "0" ]; then
+                log_warning_msg "${MSGPREFIX} unable to remove"
+                return
+            fi
+        else
+            # Else we don't touch this, just issue a warning.
+            log_warning_msg "${MSGPREFIX} path is not a symlink"
+            return
+        fi
+    fi
+
+    log_success_msg "${MSGPREFIX} success"
+}
