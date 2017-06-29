@@ -1870,6 +1870,18 @@ if (!$RegistrationActivate) {
 	}
 }
 
+//Refresh value upon profile submission:
+if (isset($_POST['submitted-profile'])) {
+	$result_Header = $request_Header->execute();
+	if (FileMaker::isError($result_Header)) {
+		echo "<p>Error: There was a problem processing your information. Please send a note to tech@hiperforms.com with the following information so they can review your record: </p>"
+			. "<p>Error Code 100: " . $result->getMessage() . "</p>";
+		die();
+	}
+	$records_Header = $result_Header->getRecords();
+	$record_Header = $result_Header->getFirstRecord();
+}
+
 $DaysSinceSuccessfulProfileVerification = $record_Header->getField('z_DaysSinceSuccessfulProfileUpdate');
 if ($DaysSinceSuccessfulProfileVerification == "") {
 	$ProfileStatus = "black";
