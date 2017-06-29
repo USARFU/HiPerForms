@@ -940,14 +940,13 @@ if (isset($_POST['submitted-profile'])) {
 	##// Replace \n\r with just \n for FileMaker
 	$Bio = (isset ($_POST['Bio']) ? str_replace("\r", "", $_POST['Bio']) : "");
 	
-//	$FacePhotoCropPath = (isset ($_POST['CroppedFace']) ? str_replace("..", "https://hiperforms.com", $_POST['CroppedFace']) : "");
-//	$ProofOfSchoolCropPath = (isset ($_POST['CroppedSchool']) ? str_replace("..", "https://hiperforms.com", $_POST['CroppedSchool']) : "");
-//	$ProofOfDOBCropPath = (isset ($_POST['CroppedDOB']) ? str_replace("..", "https://hiperforms.com", $_POST['CroppedDOB']) : "");
-	
-	$emergencyContactFirstName = (isset ($_POST['emergencyContactFirstName']) ? fix_string($_POST['emergencyContactFirstName']) : "");
-	$emergencyContactLastName = (isset ($_POST['emergencyContactLastName']) ? fix_string($_POST['emergencyContactLastName']) : "");
-	$emergencyContactNumber = (isset ($_POST['emergencyContactNumber']) ? fix_string($_POST['emergencyContactNumber']) : "");
-	$emergencyContactRelationship = (isset ($_POST['emergencyContactRelationship']) ? fix_string($_POST['emergencyContactRelationship']) : "");
+	if (!$IsPlayer || !$U18) {
+		// A Youth Player doesn't need these fields, as their Guardian 1 fields double for them
+		$emergencyContactFirstName = (isset ($_POST['emergencyContactFirstName']) ? fix_string($_POST['emergencyContactFirstName']) : "");
+		$emergencyContactLastName = (isset ($_POST['emergencyContactLastName']) ? fix_string($_POST['emergencyContactLastName']) : "");
+		$emergencyContactNumber = (isset ($_POST['emergencyContactNumber']) ? fix_string($_POST['emergencyContactNumber']) : "");
+		$emergencyContactRelationship = (isset ($_POST['emergencyContactRelationship']) ? fix_string($_POST['emergencyContactRelationship']) : "");
+	}
 	$spouseName = (isset ($_POST['spouseName']) ? fix_string($_POST['spouseName']) : "");
 	$spouseEmail = (isset ($_POST['spouseEmail']) ? fix_string($_POST['spouseEmail']) : "");
 	$spouseCell = (isset ($_POST['spouseCell']) ? fix_string($_POST['spouseCell']) : "");
@@ -1137,7 +1136,7 @@ if (isset($_POST['submitted-profile'])) {
 			}
 		}
 		
-		if (!$IsCoach && !$IsManager) {
+		if (!$IsCoach && !$IsManager && !$U18) {
 			$fail .= validate_empty_field($emergencyContactFirstName, "Emergency Contact: First Name");
 			$fail .= validate_empty_field($emergencyContactLastName, "Emergency Contact: Last Name");
 			$fail .= validate_empty_field($emergencyContactNumber, "Emergency Contact: Phone Number");
@@ -1250,11 +1249,17 @@ if (isset($_POST['submitted-profile'])) {
 		$edit->setField('Birthplace_Country', $Birthplace_Country);
 		$edit->setField('Bio', $Bio);
 		
-		$edit->setField('emergencyContactFirstName', $emergencyContactFirstName);
-		$edit->setField('emergencyContactLastName', $emergencyContactLastName);
-		$edit->setField('emergencyContactNumber', $emergencyContactNumber);
-		$edit->setField('emergencyContactRelationship', $emergencyContactRelationship);
+		if (!$U18) {
+			$edit->setField('emergencyContactFirstName', $emergencyContactFirstName);
+			$edit->setField('emergencyContactLastName', $emergencyContactLastName);
+			$edit->setField('emergencyContactNumber', $emergencyContactNumber);
+			$edit->setField('emergencyContactRelationship', $emergencyContactRelationship);
+		}
 		if ($U18 && $IsPlayer) {
+			$edit->setField('emergencyContactFirstName', $Guardian1FirstName);
+			$edit->setField('emergencyContactLastName', $Guardian1LastName);
+			$edit->setField('emergencyContactNumber', $Guardian1Cell);
+			$edit->setField('emergencyContactRelationship', $Guardian1Type);
 			$edit->setField('Guardian1Type', $Guardian1Type);
 			$edit->setField('Guardian1FirstName', $Guardian1FirstName);
 			$edit->setField('Guardian1LastName', $Guardian1LastName);

@@ -342,7 +342,7 @@ if (isset($message_profile)) {
 		</legend>
 
 		<div class="input" style="border-top: none;">
-			<?php if (($IsCoach || $IsManager) && !$IsPlayer) { ?>
+			<?php if (($IsCoach || $IsManager) && !$IsPlayer) { // Non-mandatory emergency contact for non-players ?>
 
 				<label for="emergency">Emergency Contact</label>
 				<div class="rightcolumn">
@@ -380,7 +380,7 @@ if (isset($message_profile)) {
 					</div>
 				</div>
 			
-			<?php } else { ?>
+			<?php } elseif ($IsPlayer && !$U18) { // Mandatory emergency contact fields for non-youth players ?>
 
 				<label for="emergency">Emergency Contact <span
 							class="<?php if (empty($emergencyContactFirstName) || empty($emergencyContactLastName) || empty($emergencyContactNumber) || empty($emergencyContactRelationship)) {
@@ -430,14 +430,15 @@ if (isset($message_profile)) {
 
 		</div>
 		
-		<?php if ($U18 && $IsPlayer) { ?>
-			<div class="input">
+		<?php if ($U18 && $IsPlayer) { // Youth players: Guardian 1 contact information will be copied into the emergency contact fields. ?>
+			<div class="input" style="border-top: none;">
 				<label for="Parent">Parent / Guardian 1 <span
 							class="<?php if (empty($Guardian1FirstName) || empty($Guardian1LastName) || empty($Guardian1Cell) || empty($Guardian1eMail) || empty($Guardian1Type)) {
 								echo "mandatoryFailed";
 							} else {
 								echo "mandatory";
-							} ?>">REQUIRED</span>
+							} ?>">REQUIRED</span><br />
+					<small>(Emergency Contact)</small>
 				</label>
 				<div class="rightcolumn">
 					<div class="row">
@@ -1055,7 +1056,7 @@ if (isset($message_profile)) {
 
 			<div class="input">
 				<label for="slim-ProofOfDOB">Proof of Date of Birth<br/>
-					<small>(<i>Birth Certificate or Gov. Issued ID</i>)</small>
+					<small>(Birth Certificate or Gov. Issued ID)</small>
 					<?php
 					if (0) {
 						echo "<span class='";
