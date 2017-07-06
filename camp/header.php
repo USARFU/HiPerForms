@@ -31,7 +31,7 @@ if (isset($_POST['ID'])) {
 $IDType = (isset($_GET['IDType']) && $_GET['IDType'] == 'Camp' ? 'Camp' : "");
 $IDType = (isset($_GET['IDType']) && $_GET['IDType'] == 'Document' ? 'Document' : $IDType);
 
-if ($IDType == 'Camp') { //Get data based on Camp ID
+if ($IDType == 'Camp') { //Get data based on Camp ID; for preview purposes
 	$layout =& $fm->getLayout('PHP-Camp');
 	$request = $fm->newFindCommand('PHP-Camp');
 	$request->addFindCriterion('ID', '==' . $ID);
