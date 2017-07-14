@@ -31,6 +31,7 @@ if (isset($_POST['submitted-login'])) {
 			$eMail = fix_string($_POST['eMail']);
 			$request = $fm->newFindCommand('Member-Header');
 			$request->addFindCriterion('eMail', '==' . $eMail);
+			$request->addFindCriterion('z_Exclusive_TicketBuyerDB', '=');
 			$result = $request->execute();
 			if (FileMaker::isError($result)) {
 				$record = "";
@@ -108,6 +109,7 @@ if (isset($_POST['submitted-create'])) {
 		## Check to see if any duplicates already exist in the database #############
 		$eMailrequest = $fm->newFindCommand('Member-Header');
 		$eMailrequest->addFindCriterion('eMail', '==' . $eMail);
+		$eMailrequest->addFindCriterion('z_Exclusive_TicketBuyerDB', '=');
 		$eMailresult = $eMailrequest->execute();
 		if (!FileMaker::isError($eMailresult)) {
 			$failNewAccount .= "An account with that e-mail address already exists. Select the Request New Password option instead. <br />";
@@ -117,6 +119,7 @@ if (isset($_POST['submitted-create'])) {
 			$request->addFindCriterion('firstName', '==' . $firstName);
 			$request->addFindCriterion('lastName', '==' . $lastName);
 			$request->addFindCriterion('c_eMailValidator', '==' . 1);
+			$request->addFindCriterion('z_Exclusive_TicketBuyerDB', '=');
 			$result = $request->execute();
 			if (!FileMaker::isError($result)) {
 				$failNewAccount .= "An account with the same Name and Date of Birth already exists. Select the Forgot Account E-Mail option to look up your account. <br />";
@@ -125,6 +128,18 @@ if (isset($_POST['submitted-create'])) {
 		#############################################################################
 	}
 	if (empty($failNewAccount)) {
+		## Check to see if an Exclusive record exists that needs to be converted ########
+		$ExclusiveTBDBrequest = $fm->newFindCommand('Member-Header');
+		$ExclusiveTBDBrequest->addFindCriterion('eMail', '==' . $eMail);
+		$ExclusiveTBDBrequest->addFindCriterion('z_Exclusive_TicketBuyerDB', '=' . 1);
+		$ExclusiveTBDBresult = $ExclusiveTBDBrequest->execute();
+		
+		if (!FileMaker::isError($ExclusiveTBDBresult)) {
+			$z_Exclusive_TicketBuyerDB = 1;
+		} else {
+			$z_Exclusive_TicketBuyerDB = "";
+		}
+		
 		## Create New Account and e-mail out confirmation link ##########################
 		$newPersonnelRecord = array(
 			'firstName' => $firstName,
@@ -132,6 +147,7 @@ if (isset($_POST['submitted-create'])) {
 			'DOB' => $DOB,
 			'gender' => $gender,
 			'eMail' => $eMail,
+			'z_Exclusive_TicketBuyerDB' => $z_Exclusive_TicketBuyerDB,
 		);
 		$newRecordRequest =& $fm->newAddCommand('NewAccount', $newPersonnelRecord);
 		$result = $newRecordRequest->execute();
@@ -144,17 +160,19 @@ if (isset($_POST['submitted-create'])) {
 			$newRecord = current($result->getRecords());
 			$ID_Account = $newRecord->getField('ID');
 		}
-//			NEED TO UPDATE SCRIPT'S MESSAGE THAT IS EMAILED OUT	//
+		
+		//			NEED TO UPDATE SCRIPT'S MESSAGE THAT IS EMAILED OUT	//
 		$newPerformScript = $fm->newPerformScriptCommand('NewAccount', 'ConfirmationLink', $ID_Account);
 		$scriptResult = $newPerformScript->execute();
 		if (FileMaker::isError($scriptResult)) {
 			echo "<p>Error: Could not send you the confirmation e-mail.</p>"
-				. "<p>Error Code 002: " . $scriptResult->getMessage() . "</p>";
+				. "<p>Error Code 003: " . $scriptResult->getMessage() . "</p>";
 			echo "<p>If problems continue, please send a note to tech@hiperforms.com with the above information so they can review the problem.</p>";
 			die();
 		} else {
 			$message2 = "Your account has been created. A confirmation link has been e-mailed to the address provided. You must click this link within 48 hours to activate your account.";
 		}
+		
 		#############################################################################
 	} elseif (!empty($failNewAccount)) {
 		//## Red Field Borders on required fields that failed
@@ -185,6 +203,7 @@ if (isset($_POST['submitted-password'])) {
 	if (empty($fail)) {
 		$request = $fm->newFindCommand('Member-Header');
 		$request->addFindCriterion('eMail', '==' . $eMail_password);
+		$request->addFindCriterion('z_Exclusive_TicketBuyerDB', '=');
 		$result = $request->execute();
 		
 		if (FileMaker::isError($result)) {
@@ -258,6 +277,7 @@ if (isset($_POST['submitted-email'])) {
 			$request->addFindCriterion('firstName', '==' . $firstName);
 			$request->addFindCriterion('lastName', '==' . $lastName);
 			$request->addFindCriterion('DOB', '==' . $DOB);
+			$request->addFindCriterion('z_Exclusive_TicketBuyerDB', '=');
 			if (!empty($zipCode)) {
 				$request->addFindCriterion('zipCode', '==' . $zipCode);
 			}
