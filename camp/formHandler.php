@@ -62,10 +62,11 @@ if ($IDType == 'Camp') { //Get data based on Camp ID; for preview purposes
 	$records = $result->getRecords();
 	$record = $result->getFirstRecord();
 	
-	// ID is valid, get Personnel information for the header //
+	// ID is valid, get Personnel information for the header & logic//
 	$recordID = $record->getRecordId();
 	$ID_Camp = $record->getField('ID_Event');
 	$name = $record->getField('c_lastFirst_lookup');
+	$inviteStatus = $record->getField('inviteStatus');
 	
 	// Get data based on Camp ID //
 	$campRequest = $fm->newFindCommand('Camp Header');
@@ -83,19 +84,20 @@ if ($IDType == 'Camp') { //Get data based on Camp ID; for preview purposes
 }
 //################## END INITIAL LOAD TESTING #################//
 
-//## Header Data:
+//## Header & form logic data:
 $customLogo = urlencode($campRecord->getField('WebFormLogo'));
 $venueName = $campRecord->getField('c_Venue');
 $campName = $campRecord->getField('Name');
 $dateStarted = $campRecord->getField('StartDate');
 $fee = $campRecord->getField('Fee');
 $pageHeader = $campRecord->getField('WebFormInviteTitle');
+$PlayerLevel = $campRecord->getField('PlayerLevel');
 
 //
 // Tab 1: Invite form submitted
-if (isset($_POST['submitted-invite'])) {
+if (isset($_POST['submitted-attendance'])) {
 	$activeTab = 1;
-	
+	include 'formHandler-ConfirmAttendance.php';
 }
 //---- END Invite form submited
 

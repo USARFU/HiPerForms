@@ -15,6 +15,9 @@
 	include "$root/include/functions.php";
 	include_once "formHandler.php";
 	?>
+
+	<script src="/include/script/jquery/jquery.min.js"></script>
+	
 </head>
 
 <body id="body-tabbed">
@@ -24,9 +27,9 @@
 	<div class="header">
 		<?php
 		if (empty($customLogo)) {
-			echo '<img src="../include/USAR-logo.png" alt="logo" style="max-height: 100px; max-width: 100px;"/>';
+			echo '<img src="/include/USAR-logo.png" alt="logo" style="max-height: 100px; max-width: 100px;"/>';
 		} else {
-			echo '<img src="../include/ContainerBridge.php?path=' . $customLogo . '" alt="logo" />';
+			echo '<img src="/include/ContainerBridge.php?path=' . $customLogo . '" alt="logo" />';
 		}
 		?>
 		
@@ -120,7 +123,7 @@
 			<div class="tab-1">
 				
 				<?php if ($activeTab == 1) {
-					include_once '';
+					include_once '1-ConfirmAttendance.php';
 				} ?>
 
 			</div>

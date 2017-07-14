@@ -64,6 +64,28 @@
 .w-15 {
   width: 15%;
 }
+.group {
+  width: auto;
+  overflow: auto;
+  border: #1F9ECD outset;
+  margin: 2em auto 1em auto;
+  padding: .5em 1em;
+}
+.group > legend {
+  color: #00788b;
+  font-family: Georgia, serif;
+  font-size: 120%;
+  font-weight: bold;
+}
+.input {
+  border-top: #1F9ECD thin solid;
+  padding-bottom: 6px;
+  padding-top: 6px;
+  overflow: hidden;
+}
+.input > p {
+  padding-top: 6px;
+}
 #signature,
 #signature2,
 #signature3,
@@ -127,7 +149,6 @@
 	display: none;
 	visibility: hidden;
 	opacity: 0;
-    text-align: left;
 }
 #tabbed a {
 	text-decoration: none;
@@ -135,7 +156,7 @@
 #tabbed {
 	width: 1000px; /* <-- Adjust this value to change the width of the tabs */
 	position: relative;
-	text-align: center; /* This value positions the tab labels on top. You can set: left, right or center. */
+	text-align: left; /* This value positions the tab labels on top. You can set: left, right or center. */
 	-webkit-backface-visibility: hidden;
 	-webkit-transform-style: preserve-3d;
 }

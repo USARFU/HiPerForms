@@ -81,6 +81,32 @@
   width: 15%;
 }
 
+.group { //group of fields
+  width: auto;
+  overflow: auto;
+  border: #1F9ECD outset;
+  margin: 2em auto 1em auto;
+  padding: .5em 1em;
+
+  & > legend {
+    color: #00788b;
+    font-family: Georgia, serif;
+    font-size: 120%;
+    font-weight: bold;
+  }
+}
+
+.input {
+  border-top: #1F9ECD thin solid;
+  padding-bottom: 6px;
+  padding-top: 6px;
+  overflow: hidden;
+
+  & > p {
+    padding-top: 6px;
+  }
+}
+
 #signature, #signature2, #signature3, #signature4, #signature5 {
   border: 2px dotted black;
   background-color: lightgrey;

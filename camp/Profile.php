@@ -49,7 +49,7 @@
 	$includeCCPayment = ($campRecord->getField('includeCCPaymentForm') != 1 ? 0 : 1);
 	$pageHeader = (empty($campRecord->getField('WebFormProfileTitle')) ? "USA Rugby Personnel Profile Update" : $campRecord->getField('WebFormProfileTitle'));
 	$inviteCutOff = $campRecord->getField('inviteCutOff');
-	$playerLevel = $campRecord->getField('playerLevel');
+	$playerLevel = $campRecord->getField('PlayerLevel');
 	$SignatureOption = $campRecord->getField('SignatureFieldOption');
 	$includeFacePhoto = $campRecord->getField('wf_profile_FacePhoto');
 	$includeDominantHandFoot = $campRecord->getField('wf_profile_DominantHandFoot');
@@ -2682,7 +2682,7 @@ if (!empty($fail) && isset($_POST['respondent_exists'])) {
 										  title="The school grade level you are or will be at.">
 									<option value=""></option>
 									<?php
-									for ($i = 3; $i < 13; $i++) {
+									for ($i = 3; $i < 14; $i++) {
 										echo "<option value='" . $i . "'" . ($CurrentSchoolGradeLevel == $i ? "selected='selected'" : "") . ">" . $i . "</option>";
 									}
 									?>
