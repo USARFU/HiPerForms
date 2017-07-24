@@ -87,7 +87,21 @@
 	if (isset($_POST['edit-club-submitted'])) {
 		
 		## Get submitted data ############################
-		$LogoCropPath = (isset ($_POST['CroppedLogo']) ? str_replace("..", "https://hiperforms.com", $_POST['CroppedLogo']) : "");
+//		$LogoCropPath = (isset ($_POST['CroppedLogo']) ? str_replace("..", "https://hiperforms.com", $_POST['CroppedLogo']) : "");
+		
+		$images_logo = Slim::getImages('slim_logo');
+		$image_logo = $images_logo[0];
+		$name_logo = $image_logo['output']['name'];
+		$data_logo = $image_logo['output']['data'];
+		
+		// store the logo file
+		if (!empty($name_logo)) {
+			$file_logo = Slim::saveFile($data_logo, $name_logo, '../tmp/');
+			if (!empty($file_logo['name'])) {
+				$LogoCropPath = "https://hiperforms.com/tmp/" . $file_logo['name'];
+			}
+		}
+		
 		$Level = isset($_POST['Level']) ? fix_string($_POST['Level']) : "";
 		$TeamStatus = isset($_POST['TeamStatus']) ? fix_string($_POST['TeamStatus']) : "";
 		$AgeGroup = isset($_POST['AgeGroup']) ? fix_string($_POST['AgeGroup']) : "";
@@ -215,7 +229,7 @@
 		$result = $edit->execute();
 		if (FileMaker::isError($result)) {
 			echo "<p>Error: There was a problem updating your club. Please send a note to tech@hiperforms.com with the following information so they can review the record: </p>"
-				. "<p>Error Code 342: " . $result->getMessage() . "</p>";
+				. "<p>Error Code 341: " . $result->getMessage() . "</p>";
 			die();
 		}
 		
@@ -225,7 +239,7 @@
 			$scriptResult = $newPerformScript->execute();
 			if (FileMaker::isError($scriptResult)) {
 				echo "<p>Error: There was a problem processing your information. Please send a note to tech@hiperforms.com with the following information so they can review your record: </p>"
-					. "<p>Error Code 343: " . $scriptResult->getMessage() . "</p>";
+					. "<p>Error Code 342: " . $scriptResult->getMessage() . "</p>";
 				die();
 			}
 		}
@@ -246,7 +260,7 @@
 		$result = $request->execute();
 		if (FileMaker::isError($result)) {
 			echo "<p>Error: There was a problem processing your information. Please send a note to tech@hiperforms.com with the following information so they can review your record: </p>"
-				. "<p>Error Code 342: " . $result->getMessage() . "</p>";
+				. "<p>Error Code 343: " . $result->getMessage() . "</p>";
 			die();
 		}
 		$records = $result->getRecords();
@@ -259,7 +273,7 @@
 		$scriptResult = $newPerformScript->execute();
 		if (FileMaker::isError($scriptResult)) {
 			echo "<p>Error: There was a problem processing your information. Please send a note to tech@hiperforms.com with the following information so they can review your record: </p>"
-				. "<p>Error Code 312: " . $scriptResult->getMessage() . "</p>";
+				. "<p>Error Code 344: " . $scriptResult->getMessage() . "</p>";
 			die();
 		}
 	}
@@ -299,7 +313,7 @@
 					$ClubMember_result = $ClubMember_edit->execute();
 					if (FileMaker::isError($ClubMember_result) && !empty($ClubMember_result->code)) { //supress error is date is invalid, and no other changes were made to record
 						echo "<p>Error: There was a problem updating your club membership history. If this continues, please send a note to tech@hiperforms.com with the following information so they can review your record: </p>"
-							. "<p>Error Code 343: (" . $ClubMember_result->code . ") " . $ClubMember_result->getMessage() . "</p>";
+							. "<p>Error Code 345: (" . $ClubMember_result->code . ") " . $ClubMember_result->getMessage() . "</p>";
 						die();
 					}
 					// Audit:
@@ -328,7 +342,7 @@
 		$result = $request->execute();
 		if (FileMaker::isError($result)) {
 			echo "<p>Error: There was a problem processing your information. Please send a note to tech@hiperforms.com with the following information so they can review your record: </p>"
-				. "<p>Error Code 343: " . $result->getMessage() . "</p>";
+				. "<p>Error Code 346: " . $result->getMessage() . "</p>";
 			die();
 		}
 		$records = $result->getRecords();
@@ -349,7 +363,7 @@
 		$result = $request->execute();
 		if (FileMaker::isError($result) && FileMaker::isError($result) != 401) {
 			echo "<p>Error: There was a problem processing your information. Please send a note to tech@hiperforms.com with the following information so they can review your record: </p>"
-				. "<p>Error Code 344: " . $result->getMessage() . "</p>";
+				. "<p>Error Code 347: " . $result->getMessage() . "</p>";
 			die();
 		} elseif (!FileMaker::isError($result)) {
 			$PoolMemberRecords = $result->getRecords();
@@ -363,7 +377,7 @@
 		$result = $request->execute();
 		if (FileMaker::isError($result) && FileMaker::isError($result) != 401) {
 			echo "<p>Error: There was a problem processing your information. Please send a note to tech@hiperforms.com with the following information so they can review your record: </p>"
-				. "<p>Error Code 345: " . $result->getMessage() . "</p>";
+				. "<p>Error Code 348: " . $result->getMessage() . "</p>";
 			die();
 		} elseif (!FileMaker::isError($result)) {
 			$PoolMemberRecords = $result->getRecords();
@@ -380,7 +394,7 @@
 		$result = $request->execute();
 		if (FileMaker::isError($result) && FileMaker::isError($result) != 401) {
 			echo "<p>Error: There was a problem processing your information. Please send a note to tech@hiperforms.com with the following information so they can review your record: </p>"
-				. "<p>Error Code 346: " . $result->getMessage() . "</p>";
+				. "<p>Error Code 349: " . $result->getMessage() . "</p>";
 			die();
 		} elseif (!FileMaker::isError($result)) {
 			$PoolMemberRecords = $result->getRecords();
@@ -394,7 +408,7 @@
 		$result = $request->execute();
 		if (FileMaker::isError($result) && FileMaker::isError($result) != 401) {
 			echo "<p>Error: There was a problem processing your information. Please send a note to tech@hiperforms.com with the following information so they can review your record: </p>"
-				. "<p>Error Code 347: " . $result->getMessage() . "</p>";
+				. "<p>Error Code 350: " . $result->getMessage() . "</p>";
 			die();
 		} elseif (!FileMaker::isError($result)) {
 			$PoolMemberRecords2 = $result->getRecords();
@@ -413,7 +427,7 @@
 		$result = $request->execute();
 		if (FileMaker::isError($result) && FileMaker::isError($result) != 401) {
 			echo "<p>Error: There was a problem processing your information. Please send a note to tech@hiperforms.com with the following information so they can review your record: </p>"
-				. "<p>Error Code 348: " . $result->getMessage() . "</p>";
+				. "<p>Error Code 351: " . $result->getMessage() . "</p>";
 			die();
 		} elseif (!FileMaker::isError($result)) {
 			$PoolMemberRecords = $result->getRecords();
@@ -478,6 +492,7 @@
 			<img src="../include/USAR-logo.png" alt="logo"/>
 		</div>
 		<h1 class="narrow">Club Management for <?php echo $ClubName; ?></h1>
+<!--		<h2 class="narrow">Club ID: --><?php //echo $ID_Club; ?><!--</h2>-->
 	</div>
 
 	<div style="position: relative">
@@ -541,16 +556,33 @@
 					</div>
 
 					<div class="input">
-						<label class="w-12" for="Logo">Logo</label>
+						<label class="w-12" for="slim-Logo">Logo</label>
 						<?php if ($EditClub) { ?>
-							<div class="container rightcolumn" id="crop-Logo">
 
-								<!-- Current avatar -->
-								<div class="avatar-view" id="logo-view" title="Change your Club's Logo">
-									<img src="<?php echo $LogoEditor; ?>" alt="Logo">
+							<div class="rightcolumn imgpreview">
+
+								<div class="slim"
+									  id="slim-Logo"
+									  data-instant-edit="true"
+									  data-download="true"
+									  data-fetcher="../fetch.php">
+									<input type="file" name="slim_logo[]"/>
+									<img src="<?php echo $LogoEditor; ?>" alt="">
+								</div>
+								<div class="row">
+									<span style="font-style: italic;">Select the image above, or drag an image over, to upload a new image.</span>
 								</div>
 
 							</div>
+							
+<!--							<div class="container rightcolumn" id="crop-Logo">-->
+
+								<!-- Current avatar -->
+<!--								<div class="avatar-view" id="logo-view" title="Change your Club's Logo">-->
+<!--									<img src="--><?php //echo $LogoEditor; ?><!--" alt="Logo">-->
+<!--								</div>-->
+<!---->
+<!--							</div>-->
 						<?php } elseif (!empty($Logo64)) {
 							echo "
 						<div style='display: inline-block; width: 100px; height: 80px;  background-size: contain; background-repeat: no-repeat; background-image:url(" . $Logo64 . ")'></div>
@@ -573,7 +605,7 @@
 								<option value="">&nbsp;</option>
 								<?php
 								foreach ($ClubLevelValues as $value) {
-									echo "<option value='" . $value . "'" . ($Level == $value ? "selected='selected'>" : ">") . $value . "</option>";
+									echo "<option value='" . $value . "' " . ($Level == $value ? "selected='selected'>" : ">") . $value . "</option>";
 								}
 								?>
 							</select>
@@ -612,7 +644,7 @@
 								<option value="">&nbsp;</option>
 								<?php
 								foreach ($AgeGroupValues as $value) {
-									echo "<option value='" . $value . "'" . ($AgeGroup == $value ? "selected='selected'>" : ">") . $value . "</option>";
+									echo "<option value='" . $value . "' " . ($AgeGroup == $value ? "selected='selected'>" : ">") . $value . "</option>";
 								}
 								?>
 							</select>
@@ -636,7 +668,7 @@
 								<option value="">&nbsp;</option>
 								<?php
 								foreach ($ClubGenderValues as $value) {
-									echo "<option value='" . $value . "'" . ($Gender == $value ? "selected='selected'>" : ">") . $value . "</option>";
+									echo "<option value='" . $value . "' " . ($Gender == $value ? "selected='selected'>" : ">") . $value . "</option>";
 								}
 								?>
 							</select>
@@ -694,7 +726,7 @@
 								<option value="">&nbsp;</option>
 								<?php
 								foreach ($stateValues as $value) {
-									echo "<option value='" . $value . "'" . ($State == $value ? "selected='selected'>" : ">") . $value . "</option>";
+									echo "<option value='" . $value . "' " . ($State == $value ? "selected='selected'>" : ">") . $value . "</option>";
 								}
 								?>
 							</select>
@@ -845,7 +877,7 @@
 									<option value="">&nbsp;</option>
 									<?php
 									foreach ($stateValues as $value) {
-										echo "<option value='" . $value . "'" . ($MatchFieldState == $value ? "selected='selected'>" : ">") . $value . "</option>";
+										echo "<option value='" . $value . "' " . ($MatchFieldState == $value ? "selected='selected'>" : ">") . $value . "</option>";
 									}
 									?>
 								</select>
@@ -965,10 +997,6 @@
 				<input type="hidden" name="edit-club-submitted" value="true"/>
 
 				<input id="CroppedLogo" name="CroppedLogo" type="hidden" value=""/>
-
-				<div id="Submit_Dialog" title="Updating Club">
-					<p>Please wait while the club's record is updated. This can take up to a minute.</p>
-				</div>
 
 			</form>
 		</div>
@@ -1130,14 +1158,6 @@
 
 				<input type='submit' name='APPLY' value='Update Members' class='submit buy' id='Submit_Members_Button'/>
 
-				<div id='Submit_Members_Dialog' title='Updating Members'>
-					<p>Please wait while the membership records are updated. This can take up to a minute.</p>
-				</div>
-
-				<div id='View_Member_Dialog' title='Opening Member Profile'>
-					<p>Please wait while the selected profile is opened.</p>
-				</div>
-
 			</form>
 			<?php
 			//			echo '$ClubMember_Original: <br />';
@@ -1150,9 +1170,6 @@
 
 	</div>
 	<!-- / wrapper -->
-
-	<!-- Cropping modal -->
-	<?php include_once '../include/ImageCropper.html'; ?>
 
 	<script>
        $(document).ready(function () {
@@ -1182,7 +1199,7 @@
                var NominationHeader = "I, " + Nominator + ", nominate " + this.name + " for:";
                switch (Level) {
                    case "High School":
-                       if (PlayerLevel == "JV") {
+                       if (PlayerLevel === "JV") {
                            buttonTitle1 = "High School All Americans, JV";
                        } else {
                            buttonTitle1 = "High School All Americans";
@@ -1248,5 +1265,19 @@
            });
        });
 	</script>
+
+
+	<div id="Submit_Dialog" title="Updating Club">
+		<p>Please wait while the club's record is updated. This can take up to a minute.</p>
+	</div>
+
+	<div id="Submit_Members_Dialog" title="Updating Members">
+		<p>Please wait while the membership records are updated. This can take up to a minute.</p>
+	</div>
+
+	<div id='View_Member_Dialog' title='Opening Member Profile'>
+		<p>Please wait while the selected profile is opened.</p>
+	</div>
+	
 </body>
 </html>

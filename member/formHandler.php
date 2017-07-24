@@ -1088,11 +1088,10 @@ if (isset($_POST['submitted-profile'])) {
 	if (!empty($name_other)) {
 		$file_other = Slim::saveFile($data_other, $name_other, '../tmp/');
 		if (!empty($file_other['name'])) {
-			$PassportCropPath = "https://hiperforms.com/tmp/" . $file_other['name'];
+			$OtherTravelCropPath = "https://hiperforms.com/tmp/" . $file_other['name'];
 		}
 	}
 	
-	$OtherTravelCropPath = (isset ($_POST['CroppedOtherTravel']) ? str_replace("..", "https://hiperforms.com", $_POST['CroppedOtherTravel']) : "");
 	$ID_primaryAirport = (isset ($_POST['ID_primaryAirport']) ? fix_string($_POST['ID_primaryAirport']) : "");
 	$ID_secondaryAirport = (isset ($_POST['ID_secondaryAirport']) ? fix_string($_POST['ID_secondaryAirport']) : "");
 	$travelComments = (isset ($_POST['travelComments']) ? fix_string($_POST['travelComments']) : "");
