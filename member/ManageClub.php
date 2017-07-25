@@ -269,7 +269,8 @@
 	
 	if ($Nominate) {
 		
-		$newPerformScript = $fm->newPerformScriptCommand('Personnel__ClubMembership', 'Nominate Player', $Nominate_player . "|" . $ID_Personnel . "|" . $Nominate_type . "|" . $Gender);
+		$ScriptParam = $Nominate_player . "|" . $ID_Personnel . "|" . $Nominate_type . "|" . $Gender;
+		$newPerformScript = $fm->newPerformScriptCommand('Personnel__ClubMembership', 'Nominate Player', $ScriptParam);
 		$scriptResult = $newPerformScript->execute();
 		if (FileMaker::isError($scriptResult)) {
 			echo "<p>Error: There was a problem processing your information. Please send a note to tech@hiperforms.com with the following information so they can review your record: </p>"
@@ -417,7 +418,7 @@
 		$PoolMemberRecords = array_merge($PoolMemberRecords, $PoolMemberRecords2);
 	}
 	
-	if ($Level == "Senior") {
+	if ($Level == "Senior" || $Level == "Pro") {
 		//JAA
 		$ID_PoolClub = $Gender == "Men" ? "E0C796E1-DA60-FE4E-88FF-EFB8C222FA4E" : "C219B4DA-D007-9A44-B2DA-EFD6D934017C";
 		$request = $fm->newFindCommand('Personnel__ClubMembership');
@@ -433,20 +434,20 @@
 			$PoolMemberRecords = $result->getRecords();
 		}
 		//USA Selects
-//		$ID_PoolClub = $Gender == "Men" ? "" : "";
-//		$request = $fm->newFindCommand('Personnel__ClubMembership');
-//		$request->addFindCriterion('ID_Club', '==' . $ID_PoolClub);
-//		$request->addFindCriterion('Role', '==' . "Player");
-//		$request->addFindCriterion('Inactive_flag', '=');
-//		$result = $request->execute();
-//		if (FileMaker::isError($result) && FileMaker::isError($result) != 401) {
-//			echo "<p>Error: There was a problem processing your information. Please send a note to tech@hiperforms.com with the following information so they can review your record: </p>"
-//				. "<p>Error Code 341: " . $result->getMessage() . "</p>";
-//			die();
-//		}
-//		$PoolMemberRecords2 = $result->getRecords();
-//
-//		$PoolMemberRecords = array_merge($PoolMemberRecords, $PoolMemberRecords2);
+		$ID_PoolClub = $Gender == "Men" ? "B76C3721-5603-4167-BDCF-EB3505C163C5" : "";
+		$request = $fm->newFindCommand('Personnel__ClubMembership');
+		$request->addFindCriterion('ID_Club', '==' . $ID_PoolClub);
+		$request->addFindCriterion('Role', '==' . "Player");
+		$request->addFindCriterion('Inactive_flag', '=');
+		$result = $request->execute();
+		if (FileMaker::isError($result) && FileMaker::isError($result) != 401) {
+			echo "<p>Error: There was a problem processing your information. Please send a note to tech@hiperforms.com with the following information so they can review your record: </p>"
+				. "<p>Error Code 352: " . $result->getMessage() . "</p>";
+			die();
+		}
+		$PoolMemberRecords2 = $result->getRecords();
+
+		$PoolMemberRecords = array_merge($PoolMemberRecords, $PoolMemberRecords2);
 	}
 	
 	$PoolMembers = array();
@@ -492,7 +493,7 @@
 			<img src="../include/USAR-logo.png" alt="logo"/>
 		</div>
 		<h1 class="narrow">Club Management for <?php echo $ClubName; ?></h1>
-<!--		<h2 class="narrow">Club ID: --><?php //echo $ID_Club; ?><!--</h2>-->
+<!--		<h2 class="narrow">Script Param: --><?php //echo $ScriptParam; ?><!--</h2>-->
 	</div>
 
 	<div style="position: relative">
@@ -1090,7 +1091,7 @@
 									echo "
 									<button type='submit' formaction='body.php?ID=" . $Member_ID_Personnel . "' class='btn btn-primary entypo-user View_Member_Button'>&nbsp;View</button>";
 								}
-								if ($ClubMember[$Member_RecordID]['Role'] == "Player" && ($Level == "High School" || $Level == "College" || $Level == "Senior") && !empty($Gender)) {
+								if ($ClubMember[$Member_RecordID]['Role'] == "Player" && ($Level == "High School" || $Level == "College" || $Level == "Senior" || $Level == "Pro") && !empty($Gender)) {
 									if ($InPool) {
 										echo "
 									<button type='button' class='btn btn-primary entypo-check Nominated_Button' style='background-color: green'>&nbsp;Nominated</button>";
@@ -1210,6 +1211,10 @@
                        buttonTitle2 = "Collegiate All Americans";
                        break;
                    case "Senior":
+                       buttonTitle1 = "Junior All Americans";
+                       buttonTitle2 = "USA Selects";
+                       break;
+                   case "Pro":
                        buttonTitle1 = "Junior All Americans";
                        buttonTitle2 = "USA Selects";
                        break;
