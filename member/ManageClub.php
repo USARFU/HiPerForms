@@ -87,8 +87,6 @@
 	if (isset($_POST['edit-club-submitted'])) {
 		
 		## Get submitted data ############################
-//		$LogoCropPath = (isset ($_POST['CroppedLogo']) ? str_replace("..", "https://hiperforms.com", $_POST['CroppedLogo']) : "");
-		
 		$images_logo = Slim::getImages('slim_logo');
 		$image_logo = $images_logo[0];
 		$name_logo = $image_logo['output']['name'];
@@ -222,7 +220,7 @@
 		## Copy new image URL to record, and run script to update picture   ###
 		## Only if an image was uploaded ######################################
 		if (!empty($LogoCropPath)) {
-			$edit->setField('LogoURL', $LogoCropPath);
+			$edit->setField('Club2::LogoURL', $LogoCropPath);
 		}
 		
 		// Commit Data:
@@ -235,7 +233,7 @@
 		
 		if (!empty($LogoCropPath)) {
 			// Run script to put image URLs into their container fields //
-			$newPerformScript = $fm->newPerformScriptCommand('Club', 'Club Image URL to Container', $ID_Club);
+			$newPerformScript = $fm->newPerformScriptCommand('Club2', 'Club Image URL to Container', $ID_Club);
 			$scriptResult = $newPerformScript->execute();
 			if (FileMaker::isError($scriptResult)) {
 				echo "<p>Error: There was a problem processing your information. Please send a note to tech@hiperforms.com with the following information so they can review your record: </p>"
@@ -352,7 +350,7 @@
 	
 	$ClubName = $record->getField('clubName');
 	$HeadCoach = $record->getField('c_HeadCoachName');
-	$Logo64 = $EditClub ? $record->getField('Logo64') : $record->getField('Logo_thumbnail64');
+	$Logo64 = $EditClub ? $record->getField('Club2::Logo64') : $record->getField('Club2::Logo_thumbnail64');
 	
 	## Get National Pool records to display if a player has already been nominated #############################
 	if ($Level == "High School" && $TeamStatus == "JV") {
@@ -560,7 +558,7 @@
 						<label class="w-12" for="slim-Logo">Logo</label>
 						<?php if ($EditClub) { ?>
 
-							<div class="rightcolumn imgpreview">
+							<div class="imgpreview">
 
 								<div class="slim"
 									  id="slim-Logo"
@@ -576,14 +574,6 @@
 
 							</div>
 							
-<!--							<div class="container rightcolumn" id="crop-Logo">-->
-
-								<!-- Current avatar -->
-<!--								<div class="avatar-view" id="logo-view" title="Change your Club's Logo">-->
-<!--									<img src="--><?php //echo $LogoEditor; ?><!--" alt="Logo">-->
-<!--								</div>-->
-<!---->
-<!--							</div>-->
 						<?php } elseif (!empty($Logo64)) {
 							echo "
 						<div style='display: inline-block; width: 100px; height: 80px;  background-size: contain; background-repeat: no-repeat; background-image:url(" . $Logo64 . ")'></div>
