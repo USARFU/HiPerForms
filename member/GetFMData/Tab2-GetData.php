@@ -50,12 +50,12 @@ $sevensValues = $layout_Tab2Profile->getValueListTwoFields('Position7s');
 $airportValues = $layout_Tab2Profile->getValueListTwoFields('Airport');
 asort($airportValues);
 
-$Photo64 = $record_Tab2Profile->getField('Photo64');
-$ProofOfDOB64 = $record_Tab2Profile->getField('ProofOfDOB64');
-$ProofOfSchool64 = $record_Tab2Profile->getField('ProofOfSchool64');
-$Passport64 = $record_Tab2Profile->getField('Passport64');
-$OtherTravel64 = $record_Tab2Profile->getField('OtherTravel64');
-$InsuranceCard64 = $record_Tab2Profile->getField('InsuranceCard64');
+$Photo64 = $record_Tab2Profile->getField('Personnel2::Photo64');
+$ProofOfDOB64 = $record_Tab2Profile->getField('Personnel2::ProofOfDOB64');
+$ProofOfSchool64 = $record_Tab2Profile->getField('Personnel2::ProofOfSchool64');
+$Passport64 = $record_Tab2Profile->getField('Personnel2::Passport64');
+$OtherTravel64 = $record_Tab2Profile->getField('Personnel2::OtherTravel64');
+$InsuranceCard64 = $record_Tab2Profile->getField('Personnel2::InsuranceCard64');
 
 //## Determine what to show in the Image editors ##//
 $FacePhotoEditor = (empty($Photo64) ? "../include/MissingFacePhoto.PNG" : $Photo64);

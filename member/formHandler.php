@@ -1326,22 +1326,22 @@ if (isset($_POST['submitted-profile'])) {
 		## Copy new image URL to record, and run script to update picture   ###
 		## Only if an image was uploaded ######################################
 		if (!empty($FacePhotoCropPath)) {
-			$edit->setField('photoURL', $FacePhotoCropPath);
+			$edit->setField('Personnel2::PhotoURL', $FacePhotoCropPath);
 		}
 		if (!empty($ProofOfSchoolCropPath)) {
-			$edit->setField('ProofOfSchoolURL', $ProofOfSchoolCropPath);
+			$edit->setField('Personnel2::ProofOfSchoolURL', $ProofOfSchoolCropPath);
 		}
 		if (!empty($ProofOfDOBCropPath)) {
-			$edit->setField('ProofOfDOBURL', $ProofOfDOBCropPath);
+			$edit->setField('Personnel2::ProofOfDOBURL', $ProofOfDOBCropPath);
 		}
 		if (!empty($InsuranceCardCropPath)) {
-			$edit->setField('InsuranceCardURL', $InsuranceCardCropPath);
+			$edit->setField('Personnel2::InsuranceCardURL', $InsuranceCardCropPath);
 		}
 		if (!empty($PassportCropPath)) {
-			$edit->setField('PassportURL', $PassportCropPath);
+			$edit->setField('Personnel2::PassportURL', $PassportCropPath);
 		}
 		if (!empty($OtherTravelCropPath)) {
-			$edit->setField('OtherTravelURL', $OtherTravelCropPath);
+			$edit->setField('Personnel2::OtherTravelURL', $OtherTravelCropPath);
 		}
 		##########################################################################
 		
