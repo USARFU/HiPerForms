@@ -1811,7 +1811,7 @@ if ($ChangeAccount) {
 		$edit = $fm->newEditCommand('Member-Header', $record_Header->getRecordId());
 		$edit->setField('eMail', $eMail);
 		if (isset($pwdMD5)) {
-			$edit->setField('Password_MD5', $newPassword);
+			$edit->setField('Personnel2::Password_MD5', $newPassword);
 		}
 		
 		$result = $edit->execute();

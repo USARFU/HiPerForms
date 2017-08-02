@@ -38,7 +38,7 @@ if (isset($_POST['submitted-login'])) {
 //			$error = $result->getMessage();
 			} else {
 				$record = $result->getFirstRecord();
-				$Password_MD5 = $record->getField('Password_MD5');
+				$Password_MD5 = $record->getField('Personnel2::Password_MD5');
 			}
 			if (empty($record)) {
 				$fail .= "That e-mail address does not match any account. <br />";
