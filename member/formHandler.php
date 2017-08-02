@@ -1795,7 +1795,7 @@ if ($ChangeAccount) {
 	}
 	if (!empty($_POST['currentPassword']) && !empty($_POST['newPassword1']) && !empty($_POST['newPassword2'])) {
 		$pwdMD5 = strtoupper(md5($_POST['currentPassword']));
-		$Password_MD5 = $record_Header->getField('Password_MD5');
+		$Password_MD5 = $record_Header->getField('Personnel2::Password_MD5');
 		if ($pwdMD5 != $Password_MD5) {
 			$fail .= "Password could not be changed: The Current Password entered does not match your existing password. <br />";
 		} elseif ($_POST['newPassword1'] != $_POST['newPassword2']) {
