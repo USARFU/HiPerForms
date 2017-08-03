@@ -65,7 +65,7 @@ $OtherTravelEditor = (empty($OtherTravel64) ? "../include/MissingOtherTravel.PNG
 $InsuranceCardEditor = (empty($InsuranceCard64) ? "../include/MissingInsurance.PNG" : $InsuranceCard64);
 
 if ($U19) {
-	$ProofOfSchool64 = $record_Tab2Profile->getField('ProofOfSchool64');
+	$ProofOfSchool64 = $record_Tab2Profile->getField('Personnel2::ProofOfSchool64');
 	$ProofOfSchoolEditor = (empty($ProofOfSchool64) ? "../include/MissingSchool.PNG" : $ProofOfSchool64);
 }
 

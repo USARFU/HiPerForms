@@ -381,11 +381,11 @@
 		$related_personnel_ID = $related_personnel->getRecordId();
 		$ID_Personnel = $related_personnel->getField('EventPersonnel__Personnel::ID');
 		$U19 = ($related_personnel->getField('EventPersonnel__Personnel::Age') < 19 ? true : false);
-		$Photo64 = $related_personnel->getField('EventPersonnel__Personnel::Photo64');
-		$ProofOfDOB64 = $related_personnel->getField('EventPersonnel__Personnel::ProofOfDOB64');
-		$Passport64 = $related_personnel->getField('EventPersonnel__Personnel::Passport64');
-		$OtherTravel64 = $related_personnel->getField('EventPersonnel__Personnel::OtherTravel64');
-		$InsuranceCard64 = $related_personnel->getField('EventPersonnel__Personnel::InsuranceCard64');
+		$Photo64 = $related_personnel->getField('EventPersonnel__Personnel2::Photo64');
+		$ProofOfDOB64 = $related_personnel->getField('EventPersonnel__Personnel2::ProofOfDOB64');
+		$Passport64 = $related_personnel->getField('EventPersonnel__Personnel2::Passport64');
+		$OtherTravel64 = $related_personnel->getField('EventPersonnel__Personnel2::OtherTravel64');
+		$InsuranceCard64 = $related_personnel->getField('EventPersonnel__Personnel2::InsuranceCard64');
 		
 		## Get Related Measurement Record ########################################
 		$measurementRequest = $fm->newFindCommand('PHP-MeasurementsRelated');
@@ -721,19 +721,19 @@
 		## Update database with images uploaded to web server ###
 		## Only if an image was uploaded ######################################
 		if (!empty($FacePhotoCropPath)) {
-			$editPersonnel->setField('photoURL', $FacePhotoCropPath);
+			$editPersonnel->setField('EventPersonnel__Personnel2::PhotoURL', $FacePhotoCropPath);
 		}
 		if (!empty($ProofOfDOBCropPath)) {
-			$editPersonnel->setField('ProofOfDOBURL', $ProofOfDOBCropPath);
+			$editPersonnel->setField('EventPersonnel__Personnel2::ProofOfDOBURL', $ProofOfDOBCropPath);
 		}
 		if (!empty($InsuranceCardCropPath)) {
-			$editPersonnel->setField('InsuranceCardURL', $InsuranceCardCropPath);
+			$editPersonnel->setField('EventPersonnel__Personnel2::InsuranceCardURL', $InsuranceCardCropPath);
 		}
 		if (!empty($PassportCropPath)) {
-			$editPersonnel->setField('PassportURL', $PassportCropPath);
+			$editPersonnel->setField('EventPersonnel__Personnel2::PassportURL', $PassportCropPath);
 		}
 		if (!empty($OtherTravelCropPath)) {
-			$editPersonnel->setField('OtherTravelURL', $OtherTravelCropPath);
+			$editPersonnel->setField('EventPersonnel__Personnel2::OtherTravelURL', $OtherTravelCropPath);
 		}
 		#######################################################################
 		
@@ -1067,11 +1067,11 @@
 	
 	//## Determine what to show in the Image editors ##//
 	if (empty($IDType)) {
-		$Photo64 = $related_personnel->getField('EventPersonnel__Personnel::Photo64');
-		$ProofOfDOB64 = $related_personnel->getField('EventPersonnel__Personnel::ProofOfDOB64');
-		$Passport64 = $related_personnel->getField('EventPersonnel__Personnel::Passport64');
-		$OtherTravel64 = $related_personnel->getField('EventPersonnel__Personnel::OtherTravel64');
-		$InsuranceCard64 = $related_personnel->getField('EventPersonnel__Personnel::InsuranceCard64');
+		$Photo64 = $related_personnel->getField('EventPersonnel__Personnel2::Photo64');
+		$ProofOfDOB64 = $related_personnel->getField('EventPersonnel__Personnel2::ProofOfDOB64');
+		$Passport64 = $related_personnel->getField('EventPersonnel__Personnel2::Passport64');
+		$OtherTravel64 = $related_personnel->getField('EventPersonnel__Personnel2::OtherTravel64');
+		$InsuranceCard64 = $related_personnel->getField('EventPersonnel__Personnel2::InsuranceCard64');
 	}
 	$FacePhotoEditor = (empty($Photo64) ? "../include/MissingFacePhoto.PNG" : $Photo64);
 	$ProofOfDOBEditor = (empty($ProofOfDOB64) ? "../include/MissingDOB.PNG" : $ProofOfDOB64);
