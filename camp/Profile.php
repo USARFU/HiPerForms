@@ -63,6 +63,7 @@
 	$includeMembershipID = $campRecord->getField('wf_profile_MembershipID');
 	$includeNationalEligible = $campRecord->getField('wf_profile_NationalEligible');
 	$includePositionFields = $campRecord->getField('wf_profile_Positions');
+	$includeStartedPlayingFields = $campRecord->getField('wf_profile_StartedPlaying');
 	$includePassportFields = $campRecord->getField('wf_profile_Passport');
 	$includeAirTravel = $campRecord->getField('wf_profile_AirTravel');
 	$includePartner = $campRecord->getField('wf_profile_Partner');
@@ -218,6 +219,7 @@
 		$nationalLevelEligible = (isset ($_POST['nationalLevelEligible']) ? fix_string($_POST['nationalLevelEligible']) : "");
 		$nationalLevelEligibleExplain = (isset ($_POST['nationalLevelEligibleExplain']) ? fix_string($_POST['nationalLevelEligibleExplain']) : "");
 		$yearStartedPlaying = (isset ($_POST['yearStartedPlaying']) ? fix_string($_POST['yearStartedPlaying']) : "");
+		$monthStartedPlaying = (isset ($_POST['monthStartedPlaying']) ? fix_string($_POST['monthStartedPlaying']) : "");
 		$primary15sPosition = (isset ($_POST['primary15sPosition']) ? fix_string($_POST['primary15sPosition']) : "");
 		$primary7sPosition = (isset ($_POST['primary7sPosition']) ? fix_string($_POST['primary7sPosition']) : "");
 		$HighlightVideoLink = (isset ($_POST['HighlightVideoLink']) ? fix_string($_POST['HighlightVideoLink']) : "");
@@ -564,6 +566,9 @@
 			$fail .= validate_empty_field($primary15sPosition, "Primary 15's Position");
 			$fail .= validate_empty_field($primary7sPosition, "Primary 7's Position");
 		}
+		if ($includeStartedPlayingFields == "Mandatory" && $CampRole == "Player") {
+			$fail .= validate_empty_field($yearStartedPlaying, "Year Started Playing Rugby");
+		}
 		if ($includePassportFields == "Mandatory") {
 			$fail .= validate_empty_field($passportHolder, "Valid Passport");
 			$fail .= validate_empty_field($passportNumber, "Passport Number");
@@ -640,13 +645,6 @@
 		}
 		$result = $edit->execute();
 		
-		//commenting out, as it dies when there are no changes to make
-//			if (FileMaker::isError($result)) {
-//				echo "<p>Error: There was a problem processing your information. Please send a note to tech@hiperforms.com with the following information so they can review your record: </p>"
-//					. "<p>Error Code 222: " . $result->getMessage() . "</p>";
-//				die();
-//			}
-		
 		$UpdateEmail = $fm->NewEditCommand('PHP-PersonnelRelatedData', $related_personnel_ID);
 		$UpdateEmail->setField('eMail', $eMail);
 		$ResultUpdateEmail = $UpdateEmail->execute();
@@ -656,7 +654,7 @@
 				$fail .= "E-mail address could not be updated, as another record in the database already uses this address. <br />";
 			} else {
 				echo "<p>Error: There was a problem processing your information. Please send a note to tech@hiperforms.com with the following information so they can review your record: </p>"
-					. "<p>Error Code 223: " . $resultPersonnel->getMessage() . "</p>";
+					. "<p>Error Code 221: " . $resultPersonnel->getMessage() . "</p>";
 				die();
 			}
 		}
@@ -672,6 +670,7 @@
 			$editPersonnel->setField('medications', $medications);
 			$editPersonnel->setField('medicationsDescr', $medicationsDescr);
 			$editPersonnel->setField('yearStartedPlaying', $yearStartedPlaying);
+			$editPersonnel->setField('monthStartedPlaying', $monthStartedPlaying);
 			$editPersonnel->setField('HighlightVideoLink', $HighlightVideoLink);
 			$editPersonnel->setField('FullMatchLink1', $FullMatchLink1);
 			$editPersonnel->setField('FullMatchLink2', $FullMatchLink2);
@@ -749,7 +748,11 @@
 		$editPersonnel->setField('unlistedClubName', $UnlistedClub_Name);
 		$editPersonnel->setField('unlistedClubCity', $UnlistedClub_City);
 		$editPersonnel->setField('unlistedClubState', $UnlistedClub_State);
-		if ($includePositionFields == 1 && $CampRole == "Player") {
+		if ($includeStartedPlayingFields != 'Hidden' && $CampRole == "Player") {
+			$editPersonnel->setField('yearStartedPlaying', $yearStartedPlaying);
+			$editPersonnel->setField('monthStartedPlaying', $monthStartedPlaying);
+		}
+		if ($includePositionFields != 'Hidden' && $CampRole == "Player") {
 			$editPersonnel->setField('primary15sPosition', $primary15sPosition);
 			$editPersonnel->setField('primary7sPosition', $primary7sPosition);
 		}
@@ -805,7 +808,7 @@
 		
 		if (FileMaker::isError($resultPersonnel)) {
 			echo "<p>Error: There was a problem processing your information. Please send a note to tech@hiperforms.com with the following information so they can review your record: </p>"
-				. "<p>Error Code 223: " . $resultPersonnel->getMessage() . "</p>";
+				. "<p>Error Code 222: " . $resultPersonnel->getMessage() . "</p>";
 			die();
 		}
 		
@@ -827,7 +830,7 @@
 			$result = $clubMembershipNewRequest->execute();
 			if (FileMaker::isError($result)) {
 				echo "<p>Error: There was a problem processing your information. Please send a note to tech@hiperforms.com with the following information so they can review your record: </p>"
-					. "<p>Error Code 224: " . $result->getMessage() . "</p>";
+					. "<p>Error Code 223: " . $result->getMessage() . "</p>";
 				exit;
 			}
 		}
@@ -849,7 +852,7 @@
 				$result = $newMeasurementRequest->execute();
 				if (FileMaker::isError($result)) {
 					echo "<p>Error: There was a problem processing your information. Please send a note to tech@hiperforms.com with the following information so they can review your record: </p>"
-						. "<p>Error Code 226: " . $result->getMessage() . "</p>";
+						. "<p>Error Code 224: " . $result->getMessage() . "</p>";
 					exit;
 				}
 			}
@@ -861,7 +864,7 @@
 			$scriptResult = $newPerformScript->execute();
 			if (FileMaker::isError($scriptResult)) {
 				echo "<p>Error: There was a problem processing your information. Please send a note to tech@hiperforms.com with the following information so they can review your record: </p>"
-					. "<p>Error Code 227: " . $scriptResult->getMessage() . "</p>";
+					. "<p>Error Code 225: " . $scriptResult->getMessage() . "</p>";
 				die();
 			}
 		}
@@ -871,7 +874,7 @@
 		$result = $request->execute();
 		if (FileMaker::isError($result)) {
 			echo "<p>Error: Your form could not be loaded. Your link ID is invalid. Check the link that was e-mailed you, and try again.</p>"
-				. "<p>Error Code 001: " . $result->getMessage() . "</p>";
+				. "<p>Error Code 226: " . $result->getMessage() . "</p>";
 			echo "<p>If problems continue, please send a note to tech@hiperforms.com with the above information so they can review your record.</p>";
 			die();
 		}
@@ -913,6 +916,7 @@
 			$nationalLevelEligible = $related_personnel->getField('EventPersonnel__Personnel::nationalLevelEligible');
 			$nationalLevelEligibleExplain = $related_personnel->getField('EventPersonnel__Personnel::nationalLevelEligibleExplain');
 			$yearStartedPlaying = $related_personnel->getField('EventPersonnel__Personnel::yearStartedPlaying');
+			$monthStartedPlaying = $related_personnel->getField('EventPersonnel__Personnel::monthStartedPlaying');
 			$primary15sPosition = $related_personnel->getField('EventPersonnel__Personnel::primary15sPosition');
 			$primary7sPosition = $related_personnel->getField('EventPersonnel__Personnel::primary7sPosition');
 			$HighlightVideoLink = $related_personnel->getField('EventPersonnel__Personnel::HighlightVideoLink');
@@ -2043,12 +2047,40 @@ if (!empty($fail) && isset($_POST['respondent_exists'])) {
 		
 		<?php
 		if ($CampRole == "Player" || !empty($IDType)) {
+			if ($includeStartedPlayingFields != "Hidden") {
 			?>
+
 			<div class="input">
-				<label for="YearStarted">Year Started Playing Rugby</label>
-				<input name="yearStartedPlaying" type="text" size="6" id="YearStarted"
-						 title="The year you started playing rugby." <?php recallText((empty($yearStartedPlaying) ? "" : $yearStartedPlaying), "no"); ?> />
+				<label for="YearStarted">When Did You Start Playing Rugby?
+					<?php if ($includeStartedPlayingFields == "Mandatory") {
+						echo '*';
+					} ?>
+				</label>
+				
+				<?php $required = $includeStartedPlayingFields == "Mandatory" ? "yes" : "no"; ?>
+
+				<div class="rightcolumn">
+					<fieldset class="field" style="width: 4em;">
+						<legend>Year</legend>
+						<input name="yearStartedPlaying" type="text" size="6" id="YearStarted"
+								 title="The year you started playing rugby." <?php recallText((empty($yearStartedPlaying) ? "" : $yearStartedPlaying), $required); ?> />
+					</fieldset>
+					<fieldset class="field" style="width: 4em;">
+						<legend>Month</legend>
+						<select name="monthStartedPlaying" size="1" id="MonthStarted" title="Month">
+							<option value="">&nbsp;</option>
+							<?php
+							for ($i = 1 ; $i < 13 ; $i++) {
+								echo "<option value='" . $i . "' " . ($monthStartedPlaying == $i ? "selected='selected'>" : ">") . $i . "</option>";
+							}
+							?>
+						</select>
+					</fieldset>
+				</div>
+
 			</div>
+				
+				<?php } ?>
 
 			<div class="input">
 				<label for="Video1">Highlight Video Link</label>
@@ -3053,7 +3085,7 @@ if (!empty($fail) && isset($_POST['respondent_exists'])) {
             if (sigConsentB301.length > 25) {
                 document.getElementById('signatureConsent').value = sigConsentData;
             } else {
-                // Pass on existing data is applicable
+                // Pass on existing data if applicable
                 var sigConsentPOST = <?php echo json_encode($_POST['signatureConsent']); ?>;
                 if (sigConsentPOST.length > 25) {
                     document.getElementById('signatureConsent').value = sigConsentPOST;
