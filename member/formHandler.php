@@ -987,6 +987,7 @@ if (isset($_POST['submitted-profile'])) {
 	$referenceEmail3 = (isset ($_POST['referenceEmail3']) ? fix_string($_POST['referenceEmail3']) : "");
 	
 	$yearStartedPlaying = (isset ($_POST['yearStartedPlaying']) ? fix_string($_POST['yearStartedPlaying']) : "");
+	$monthStartedPlaying = (isset ($_POST['monthStartedPlaying']) ? fix_string($_POST['monthStartedPlaying']) : "");
 	$dominantHand = (isset ($_POST['dominantHand']) ? fix_string($_POST['dominantHand']) : "");
 	$dominantFoot = (isset ($_POST['dominantFoot']) ? fix_string($_POST['dominantFoot']) : "");
 	$primary15sPosition = (isset ($_POST['primary15sPosition']) ? fix_string($_POST['primary15sPosition']) : "");
@@ -1303,6 +1304,7 @@ if (isset($_POST['submitted-profile'])) {
 //		$edit->setField('MembershipID', $MembershipID);
 		if ($IsPlayer) {
 			$edit->setField('yearStartedPlaying', $yearStartedPlaying);
+			$edit->setField('monthStartedPlaying', $monthStartedPlaying);
 			$edit->setField('dominantHand', $dominantHand);
 			$edit->setField('dominantFoot', $dominantFoot);
 			$edit->setField('primary15sPosition', $primary15sPosition);
@@ -1595,6 +1597,7 @@ if (isset($_POST['submitted-profile'])) {
 	$MembershipID = $record_Tab2Profile->getField('MembershipID');
 	if ($IsPlayer) {
 		$yearStartedPlaying = $record_Tab2Profile->getField('yearStartedPlaying');
+		$monthStartedPlaying = $record_Tab2Profile->getField('monthStartedPlaying');
 		$dominantHand = $record_Tab2Profile->getField('dominantHand');
 		$dominantFoot = $record_Tab2Profile->getField('dominantFoot');
 		$primary15sPosition = $record_Tab2Profile->getField('primary15sPosition');

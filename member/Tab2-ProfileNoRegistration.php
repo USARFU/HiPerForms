@@ -913,11 +913,29 @@ if (isset($message_profile)) {
 		<?php
 		if ($IsPlayer) {
 			?>
-
+			
 			<div class="input">
-				<label for="YearStarted">Year Started Playing Rugby</label>
-				<input name="yearStartedPlaying" type="text" size="6" id="YearStarted"
-						 title="The year you started playing rugby." <?php recallText((empty($yearStartedPlaying) ? "" : $yearStartedPlaying), "no"); ?> />
+				<label for="YearStarted">When Did You Start Playing Rugby?</label>
+				
+				<div class="rightcolumn">
+					<fieldset class="field" style="width: 4em;">
+						<legend>Year</legend>
+						<input name="yearStartedPlaying" type="text" size="6" id="YearStarted"
+								 title="The year you started playing rugby." <?php recallText((empty($yearStartedPlaying) ? "" : $yearStartedPlaying), "no"); ?> />
+					</fieldset>
+					<fieldset class="field" style="width: 4em;">
+						<legend>Month</legend>
+						<select name="monthStartedPlaying" size="1" id="MonthStarted" title="Month">
+							<option value="">&nbsp;</option>
+							<?php
+							for ($i = 1 ; $i < 13 ; $i++) {
+								echo "<option value='" . $i . "' " . ($monthStartedPlaying == $i ? "selected='selected'>" : ">") . $i . "</option>";
+							}
+							?>
+						</select>
+					</fieldset>
+				</div>
+				
 			</div>
 
 			<div class="input">
@@ -961,7 +979,6 @@ if (isset($message_profile)) {
 			<div class="input">
 				<label for="15sPosition">15s Position</label>
 				<div class="rightcolumn">
-					<div class="row">
 						<fieldset class="field">
 							<legend>Primary</legend>
 
@@ -986,14 +1003,12 @@ if (isset($message_profile)) {
 								?></select>
 
 						</fieldset>
-					</div>
 				</div>
 			</div>
 
 			<div class="input">
 				<label for="7sPosition">7s Position</label>
 				<div class="rightcolumn">
-					<div class="row">
 						<fieldset class="field">
 							<legend>Primary</legend>
 
@@ -1018,7 +1033,6 @@ if (isset($message_profile)) {
 								?></select>
 
 						</fieldset>
-					</div>
 				</div>
 			</div>
 
