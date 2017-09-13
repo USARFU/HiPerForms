@@ -60,6 +60,7 @@ if (isset($fail)) {
 
 		</div>
 		
+		<div class="hidden" id="attendanceYesDiv">
 		<?php
 		if ($includeTravelMethod != "Hidden") {
 			?>
@@ -71,11 +72,6 @@ if (isset($fail)) {
 				</label>
 				<select name="methodOfTravel" size="1" id="TravelMethod"
 						  title="How will you be getting to this event?" <?php
-				if (empty($methodOfTravel)) {
-					$methodOfTravel_a = " ";
-				} else {
-					$methodOfTravel_a = $methodOfTravel;
-				}
 				if (empty($methodOfTravel) and $inviteStatus == "Yes" and $includeTravelMethod == "Mandatory") {
 					echo 'class="missing"';
 				}
@@ -83,7 +79,7 @@ if (isset($fail)) {
 					<option value="">&nbsp;</option>
 					<?php
 					foreach ($methodOfTravelValues as $value) {
-						echo "<option value='" . $value . "' " . ($methodOfTravel_a == $value ? "selected='selected'>" : ">") . $value . "</option>";
+						echo "<option value='" . $value . "' " . ($methodOfTravel == $value ? "selected='selected'>" : ">") . $value . "</option>";
 					}
 					?>
 				</select>
@@ -106,10 +102,11 @@ if (isset($fail)) {
 			<?php
 		}
 		?>
+		</div> //attendanceYes block
 
-		<div class="input">
+		<div class="input hidden" id="attendanceNoDiv">
 			<label for="Reason">If not attending the Event, state the reason.</label>
-			<input name="reasonForNotAttending" type="text" size="74" id="Reason"
+			<input name="reasonForNotAttending" type="text" size="70" id="Reason"
 					 title="If you won't be able to attend this event, please give the coach a reason why."
 				<?php
 				if ($inviteStatus == "Yes") {

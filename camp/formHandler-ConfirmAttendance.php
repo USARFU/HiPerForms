@@ -98,7 +98,7 @@ if (isset($_POST['respondent_exists']) && empty($IDType)) { // EventPersonnel wi
 		} else {
 			$inviteStatus = "Declined";
 		}
-		$edit = $fm->newEditCommand('PHP-EventInvite', $record->getRecordId());
+		$edit = $fm->newEditCommand('Camp Invite', $record->getRecordId());
 		$edit->setField('inviteStatus', $inviteStatus);
 		$edit->setField('methodOfTravel', $methodOfTravel);
 		$edit->setField('reasonForNotAttending', $reasonForNotAttending);
@@ -117,16 +117,8 @@ if (isset($_POST['respondent_exists']) && empty($IDType)) { // EventPersonnel wi
 			die();
 		}
 		
-		// Either go to CC Payment Form, or say Thank You //
-		if ($includeProfile == 1 && $inviteStatus == "Accepted") {
-			header("Location: Profile.php?ID=$ID");
-			exit();
-		} else if ($includeCCPayment == 1 && $inviteStatus == "Accepted") {
-			header("Location: Payment.php?ID=$ID");
-			exit();
-		} else {
-			$message = "Thank You. Your Registration Status has been Updated. <br />";
-		}
+		// Change this to a popover message, where clicking OK loads the PROFILE tab //
+		$message = "Thank You. Your Registration Status has been Updated. <br />";
 		
 	} else {
 		//## Red Field Borders on required fields that failed
@@ -160,7 +152,7 @@ if (isset($_POST['respondent_exists']) && empty($IDType)) { // EventPersonnel wi
 <?php
 if ($includeTravelMethod != "Hidden") {
 	if ($playerLevel == "High School" || $playerLevel == "HSAA") {
-		$methodOfTravelValues = $layout->getValueListTwoFields('Travel Method - HS');
+		$methodOfTravelValues = $layout->getValueListTwoFields('Travel Method U18');
 	} else {
 		$methodOfTravelValues = $layout->getValueListTwoFields('Travel Method');
 	}

@@ -17,6 +17,7 @@
 	?>
 
 	<script src="/include/script/jquery/jquery.min.js"></script>
+	<script src="/include/WebForms.js"></script>
 	
 </head>
 

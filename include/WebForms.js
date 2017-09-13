@@ -33,7 +33,7 @@ $(document).ready(function () {
     });
 
     <!-- IE Warning -->
-    // To use, but the class IEWarning in a div you want visible for IE browsers
+    // To use, put the class IEWarning in a div you want visible for IE browsers
     var ua = window.navigator.userAgent;
     var msie = ua.indexOf("MSIE ");
 
@@ -201,6 +201,36 @@ $(document).ready(function () {
 $(window).on("load", function () {
 
     // Conditional Hidden fields //
+
+    // Camp: Will you be attending?
+    var Attending_set = $('input:radio[name=inviteStatus]');
+    var Attending = $('input:radio[name=inviteStatus]:checked');
+    var AttendanceYesDiv = $('#attendanceYesDiv');
+    var AttendanceNoDiv = $('#attendanceNoDiv');
+    if ($(Attending).val() === "Yes") {
+        AttendanceYesDiv.removeClass('hidden');
+    } else {
+        AttendanceYesDiv.addClass('hidden');
+    }
+    if ($(Attending).val() === "No") {
+        AttendanceNoDiv.removeClass('hidden');
+    } else {
+        AttendanceNoDiv.addClass('hidden');
+    }
+    Attending_set.change(function () {
+       var avalue = this.value;
+        if (avalue === "Yes") {
+            AttendanceYesDiv.removeClass('hidden');
+        } else {
+            AttendanceYesDiv.addClass('hidden');
+        }
+        if (avalue === "No") {
+            AttendanceNoDiv.removeClass('hidden');
+        } else {
+            AttendanceNoDiv.addClass('hidden');
+        }
+    });
+    // Camp: Will you be attending? </end>
 
     //Health Insurance
     var NoInsurance = $('#NoInsurance');
