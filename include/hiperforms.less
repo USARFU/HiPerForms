@@ -79,9 +79,10 @@ input, select, textarea {
 input[type="text"], input[type="email"], input[type="tel"], input[type="password"], select {
   height: 2.5em;
   box-sizing: border-box;
-  label {
-    padding-top: 8px;
-  }
+}
+
+label + input[type="text"], label + input[type="email"], label + input[type="tel"], label + input[type="password"], label + select {
+  padding-top: 8px;
 }
 
 .input {

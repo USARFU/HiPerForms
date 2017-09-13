@@ -72,11 +72,11 @@ select {
   height: 2.5em;
   box-sizing: border-box;
 }
-input[type="text"] label,
-input[type="email"] label,
-input[type="tel"] label,
-input[type="password"] label,
-select label {
+label + input[type="text"],
+label + input[type="email"],
+label + input[type="tel"],
+label + input[type="password"],
+label + select {
   padding-top: 8px;
 }
 .input {
