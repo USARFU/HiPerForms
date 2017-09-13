@@ -14,6 +14,39 @@
   margin: 0 auto;
 }
 
+.cell {
+  display: inline-block;
+  float: left;
+  position: relative;
+  margin: 1% 2% 1% 0;
+
+  &-last-child {
+    margin-right: 0;
+  }
+
+  &-label {
+    font-weight: bold;
+    color: darkslategray;
+    letter-spacing: 1px;
+    font-variant: small-caps;
+  }
+}
+
+.group { //group of fields
+  width: auto;
+  overflow: auto;
+  border: #1F9ECD outset;
+  margin: 2em auto 1em auto;
+  padding: .5em 1em;
+
+  & > legend {
+    color: #00788b;
+    font-family: Georgia, serif;
+    font-size: 120%;
+    font-weight: bold;
+  }
+}
+
 .header {
   margin: 1em 0;
   padding: 0;
@@ -36,6 +69,23 @@
   display: none !important;
 }
 
+.input {
+  border-top: #1F9ECD thin solid;
+  padding-bottom: 6px;
+  padding-top: 6px;
+  overflow: hidden;
+
+  & > p {
+    padding-top: 6px;
+  }
+}
+
+.left-col-16 {
+  padding-top: 4px;
+  width: 16em;
+  float: left;
+}
+
 .row {
   display: block;
   float: left;
@@ -43,23 +93,6 @@
   clear: both;
 }
 
-.cell {
-  display: inline-block;
-  float: left;
-  position: relative;
-  margin: 1% 2% 1% 0;
-
-  &-last-child {
-    margin-right: 0;
-  }
-
-  &-label {
-    font-weight: bold;
-    color: darkslategray;
-    letter-spacing: 1px;
-    font-variant: small-caps;
-  }
-}
 
 .w-100 {
   width: 100%;
@@ -83,32 +116,6 @@
 
 .w-15 {
   width: 15%;
-}
-
-.group { //group of fields
-  width: auto;
-  overflow: auto;
-  border: #1F9ECD outset;
-  margin: 2em auto 1em auto;
-  padding: .5em 1em;
-
-  & > legend {
-    color: #00788b;
-    font-family: Georgia, serif;
-    font-size: 120%;
-    font-weight: bold;
-  }
-}
-
-.input {
-  border-top: #1F9ECD thin solid;
-  padding-bottom: 6px;
-  padding-top: 6px;
-  overflow: hidden;
-
-  & > p {
-    padding-top: 6px;
-  }
 }
 
 #signature, #signature2, #signature3, #signature4, #signature5 {

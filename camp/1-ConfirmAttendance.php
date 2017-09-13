@@ -70,7 +70,7 @@ if (isset($fail)) {
 		<legend>Attendance</legend>
 
 		<div class="input" style="border-top: none;">
-			<label for="attendance">Will You Be Attending?*</label>
+			<label for="attendance" class="left-col-16">Will You Be Attending?*</label>
 			<div class="rightcolumn <?php if (empty($inviteStatus)) {
 				echo ' missing';
 			} ?>">
@@ -95,7 +95,7 @@ if (isset($fail)) {
 		if ($includeTravelMethod != "Hidden") {
 			?>
 			<div class="input">
-				<label for="TravelMethod">If 'Yes': Select Method of Travel
+				<label for="TravelMethod" class="left-col-16">Method of Travel
 					<?php if ($includeTravelMethod == "Mandatory") {
 						echo "*";
 					} ?>
@@ -122,7 +122,7 @@ if (isset($fail)) {
 		if ($includeGrant != "Hidden") {
 			?>
 			<div class="input">
-				<label for="Grant">If 'Yes': Applying for a Grant?</label>
+				<label for="Grant" class="left-col-16">Applying for a Grant?</label>
 				<input type='checkbox' class='checkbox' id="Grant" name='feePayMethod'
 						 title="Check this to apply for a Grant/Scholarship."
 						 value='Scholarship' <?php if ($feePayMethod == "Scholarship") {
@@ -180,7 +180,7 @@ if (isset($fail)) {
 		<p>
 			<input name="respondent_exists" type="hidden" value="true"/>
 			<input name="ID" type="hidden" value="<?php echo $ID; ?>"/>
-			<input type="submit" name="submit" value="<?php echo $SubmitTitle; ?>" class="submit" onclick="setValue();"/>
+			<input type="submit" name="submit" value="Submit" class="submit" onclick="setValue();"/>
 		</p>
 		
 		<?php
