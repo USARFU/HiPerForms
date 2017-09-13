@@ -20,6 +20,26 @@ if ($includeTravelMethod != "Hidden") {
 		$methodOfTravelValues = $layout->getValueListTwoFields('Travel Method');
 	}
 }
+
+// Get Existing user data
+if (empty($IDType)) { // EventPersonnel ID, when the form first loads
+	$inviteStatus = $record->getField('inviteStatus');
+	if ($inviteStatus == "Accepted") {
+		$inviteStatus = "Yes";
+	}
+	if ($inviteStatus == "Declined") {
+		$inviteStatus = "No";
+	}
+	$methodOfTravel = $record->getField('methodOfTravel');
+	$reasonForNotAttending = $record->getField('reasonForNotAttending');
+	$feePayMethod = $record->getField('feePayMethod');
+} else { // Camp form editor
+	$inviteStatus = "";
+	$methodOfTravel = "";
+	$reasonForNotAttending = "";
+	$feePayMethod = "";
+}
+
 // ##################### -->
 ?>
 

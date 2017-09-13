@@ -17,6 +17,8 @@
 	?>
 
 	<script src="/include/script/jquery/jquery.min.js"></script>
+	<script src="/include/script/jquery-ui/jquery-ui.min.js"></script>
+	<script src="/include/script/select2/js/select2.min.js"></script>
 	<script src="/include/WebForms.js"></script>
 	
 </head>
