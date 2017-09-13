@@ -37,7 +37,6 @@
 		?>
 		
 		<div class="content-by-logo">
-			<h1 class="header-title">Test<?php echo $pageHeader; ?></h1>
 			<div class="row">
 				<div class="cell w-15 cell-label">
 					Your Name:

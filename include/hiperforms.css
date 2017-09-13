@@ -72,6 +72,13 @@ select {
   height: 2.5em;
   box-sizing: border-box;
 }
+input[type="text"] label,
+input[type="email"] label,
+input[type="tel"] label,
+input[type="password"] label,
+select label {
+  padding-top: 8px;
+}
 .input {
   border-top: #1F9ECD thin solid;
   padding-bottom: 10px;
@@ -90,21 +97,6 @@ select {
   float: left;
   width: 100%;
   clear: both;
-}
-.submit {
-  height: 2.5em;
-  background-color: #76b2d7;
-  border: 1px solid #766056;
-  color: #3a2014;
-  margin: 13px 0;
-  padding: 8px 16px;
-  -webkit-border-radius: 12px;
-  -moz-border-radius: 12px;
-  border-radius: 12px;
-  font-size: 14px;
-  -webkit-box-shadow: inset 3px -3px 3px rgba(0, 0, 0, 0.5), inset 0 3px 3px rgba(255, 255, 255, 0.5), inset -3px 0 3px rgba(255, 255, 255, 0.75);
-  -moz-box-shadow: inset 3px -3px 3px rgba(0, 0, 0, 0.5), inset 0 3px 3px rgba(255, 255, 255, 0.5), inset -3px 0 3px rgba(255, 255, 255, 0.75);
-  box-shadow: inset 3px -3px 3px rgba(0, 0, 0, 0.5), inset 0 3px 3px rgba(255, 255, 255, 0.5), inset -3px 0 3px rgba(255, 255, 255, 0.75);
 }
 .w-100 {
   width: 100%;
@@ -496,7 +488,7 @@ When adjusting the reset is adviced to check up the elements on your page, as th
 	padding: 14px;
 	text-align: center;
 	display: inline-block;
-	width: 100%;
+	width: 25%;
 	cursor: pointer;
 }
 #tabbed .button:hover {
