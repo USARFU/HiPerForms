@@ -71,8 +71,8 @@ if (isset($fail)) {
 
 		<div class="input" style="border-top: none;">
 			<label for="attendance" class="left-col-16">Will You Be Attending?*</label>
-			<div class="rightcolumn <?php if (empty($inviteStatus)) {
-				echo ' missing';
+			<div class="<?php if (empty($inviteStatus)) {
+				echo 'missing';
 			} ?>">
 				<input name="inviteStatus" type="radio" value="Yes" id="attendanceYes" class="radio"
 						 title="Yes, you will be attending this event."
