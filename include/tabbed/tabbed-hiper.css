@@ -362,7 +362,7 @@ When adjusting the reset is adviced to check up the elements on your page, as th
 	padding: 14px;
 	text-align: center;
 	display: inline-block;
-	width: 100%;
+	width: 25%;
 	cursor: pointer;
 }
 #tabbed .button:hover {

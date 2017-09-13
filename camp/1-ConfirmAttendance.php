@@ -180,7 +180,7 @@ if (isset($fail)) {
 		<p>
 			<input name="respondent_exists" type="hidden" value="true"/>
 			<input name="ID" type="hidden" value="<?php echo $ID; ?>"/>
-			<input type="submit" name="submit" value="Submit" class="submit" onclick="setValue();"/>
+			<input type="submit" name="submit" value="Submit" class="button blue" onclick="setValue();"/>
 		</p>
 		
 		<?php
