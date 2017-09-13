@@ -811,6 +811,10 @@ if (isset($message_profile)) {
 			<input name="MembershipID" type="text" size="16" id="MembershipID"
 					 title="The Membership ID you received when you registered at USA Rugby."
 				<?php recallText((empty($MembershipID) ? "" : $MembershipID), "yes"); ?> />
+			<?php if (!empty($MembershipID) && !empty($MembershipStatus)) {
+				echo "Status: $MembershipStatus";
+			}
+			?>
 		</div>
 
 		<div class="input">

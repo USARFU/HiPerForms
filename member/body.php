@@ -87,6 +87,8 @@
 	if (isset($_GET['activeTab'])) {
 		$activeTab = $_GET['activeTab'];
 	}
+	
+	$MembershipStatus = $record_Header->getField('c_WebPoint_MBR_STATUS');
 	################################################################################
 	
 	include 'formHandler.php';
