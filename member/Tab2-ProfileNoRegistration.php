@@ -807,12 +807,13 @@ if (isset($message_profile)) {
 					camps, or other rugby events.
 					You may look up your Member ID by selecting your State and Club <a
 							href="http://www.usarugby.org/membership-resources/public-rosters/" target="_blank">here</a>.</p>
+				<p>You may access the USA Rugby Membership system <a href="https://webpoint.usarugby.org/" target="_blank">here</a>.</p>
 			</div>
 			<input name="MembershipID" type="text" size="16" id="MembershipID"
 					 title="The Membership ID you received when you registered at USA Rugby."
 				<?php recallText((empty($MembershipID) ? "" : $MembershipID), "yes"); ?> />
 			<?php if (!empty($MembershipID) && !empty($MembershipStatus)) {
-				echo "Status: $MembershipStatus";
+				echo "<span style='padding-left: 1em;'>Status: $MembershipStatus</span>";
 			}
 			?>
 		</div>
@@ -1889,6 +1890,7 @@ if (isset($message_profile)) {
 
 	<input type="submit" name="APPLY" value="APPLY" class="submit buy" id="Submit_Button"/>
 	<input type="hidden" name="submitted-profile" value="true"/>
+	<input type="hidden" name="MembershipID_old" value="<?php echo $MembershipID; ?>"/>
 
 	<div id="Submit_Dialog" title="Updating Profile">
 		<p>Please wait while your profile is updated. This can take up to a minute.</p>

@@ -340,7 +340,7 @@ if ($RegistrationSubmitted2 || $NewClubMembership) {
 		foreach ($ActiveMembership_Renew as $key => $value) {
 			if (!empty($value)) {
 				//Error Checking, and price compilation
-				
+				echo "";
 			}
 		}
 	}
@@ -881,7 +881,13 @@ if (isset($_POST['submitted-profile'])) {
 		$Country = (isset ($_POST['Country']) ? fix_string($_POST['Country']) : "");
 		$PrimaryPhoneNumber = (isset ($_POST['PrimaryPhoneNumber']) ? fix_string($_POST['PrimaryPhoneNumber']) : "");
 		$PrimaryPhoneText_flag = isset ($_POST['PrimaryPhoneText_flag']) ? 1 : "";
-		$MembershipID = (isset ($_POST['MembershipID']) ? fix_string($_POST['MembershipID']) : "");
+		if (isset ($_POST['MembershipID'])){
+			$MembershipID_old = $_POST['MembershipID_old'];
+			$MembershipID = fix_string($_POST['MembershipID']);
+		} else {
+			$MembershipID = "";
+			$MembershipID_old = "";
+		}
 		
 		## Fail Tests #######################################
 		$fail .= validate_empty_field($firstName, "First Name");
@@ -927,6 +933,23 @@ if (isset($_POST['submitted-profile'])) {
 			echo "<p>Error: There was a problem processing your information. Please send a note to tech@hiperforms.com with the following information so they can review your record: </p>"
 				. "<p>Error Code 215: " . $result->getMessage() . "</p>";
 			die();
+		}
+		
+		if ($MembershipID != $MembershipID_old){
+			$newPerformScript = $fm->newPerformScriptCommand('Member-Header', 'Retrieve Webpoint Data', $ID_Personnel);
+			$scriptResult = $newPerformScript->execute();
+			if (FileMaker::isError($scriptResult)) {
+				$message_profile = "Error occurred while updating your Membership ID. Please send a note to tech@hiperforms.com with error code FORMHANDLER004 so they can review the problem.";
+			}
+			$result_Header = $request_Header->execute();
+			if (FileMaker::isError($result_Header)) {
+				echo "<p>Error: There was a problem processing your information. Please send a note to tech@hiperforms.com with the following information so they can review your record: </p>"
+					. "<p>Error Code 100: " . $result->getMessage() . "</p>";
+				die();
+			}
+			$records_Header = $result_Header->getRecords();
+			$record_Header = $result_Header->getFirstRecord();
+			$MembershipStatus = $record_Header->getField('c_WebPoint_MBR_STATUS');
 		}
 		
 	}

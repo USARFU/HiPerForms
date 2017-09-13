@@ -75,7 +75,7 @@
 	$ID_Personnel = $record_Header->getField('ID');
 	$U18 = ($record_Header->getField('Age') < 18 ? true : false);
 	$U19 = ($record_Header->getField('Age') < 19 ? true : false);
-//	$PrimaryRole = $record_Header->getField('PrimaryRole');
+	//	$PrimaryRole = $record_Header->getField('PrimaryRole');
 	$ActiveClubRoles = $record_Header->getField('c_ActiveClubRoles');
 	$IsPlayer = (strpos($ActiveClubRoles, "Player") === false ? false : true);
 	$IsManager = (strpos($ActiveClubRoles, "Manager") === false ? false : true);
@@ -200,8 +200,16 @@
 					echo 'checked="checked"';
 				} ?> class="radiotab loading"/>
 				<label for="t-5" class="tabs shadow entypo-archive">Manage</label>
-				<input id="t-6" name="tabbed-tabs" type="radio" onclick="window.open('https://eaglefiles.org/technical-guide?39RldjfzO8owtCykO4RB','_blank');" class="radiotab"/>
+			<?php }
+			if ($MembershipStatus == "Current" || $MembershipStatus == "Pending") {
+				?>
+				<input id="t-6" name="tabbed-tabs" type="radio"
+						 onclick="window.open('https://eaglefiles.org/technical-guide?39RldjfzO8owtCykO4RB','_blank');" class="radiotab"/>
 				<label for="t-6" class="tabs shadow entypo-feather">Eagle Files</label>
+			<?php } else { ?>
+				<input id="t-6-disabled" name="tabbed-tabs" type="radio" class="radiotab"
+						 title="Must have a current USA Rugby Membership ID to access this feature."/>
+				<label class="tabs shadow entypo-feather" style="color: gray" onclick="$('#EF_Error_Dialog').dialog('open');">Eagle Files</label>
 			<?php } ?>
 		
 		<?php } ?>
@@ -331,5 +339,28 @@
 
 </div>
 
+<div id="EF_Error_Dialog" title="Access Blocked">
+	<p>You must have a valid and current USA Rugby Membership ID to access this section.</p>
+	<p>Check your Membership ID under Profile->Rugby.</p>
+</div>
+
 </body>
+
+<script>
+    $(document).ready(function () {
+
+        $("#EF_Error_Dialog").dialog({
+            autoOpen: false,
+            show: {
+                effect: "blind",
+                duration: 1000
+            },
+            hide: {
+                effect: "explode",
+                duration: 1000
+            }
+        });
+    });
+</script>
+
 </html>
