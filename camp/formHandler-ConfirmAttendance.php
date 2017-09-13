@@ -147,15 +147,3 @@ if (isset($_POST['respondent_exists']) && empty($IDType)) { // EventPersonnel wi
 	$feePayMethod = "";
 }
 ?>
-
-<!-- Get Drop-Down List values -->
-<?php
-if ($includeTravelMethod != "Hidden") {
-	if ($playerLevel == "High School" || $playerLevel == "HSAA") {
-		$methodOfTravelValues = $layout->getValueListTwoFields('Travel Method U18');
-	} else {
-		$methodOfTravelValues = $layout->getValueListTwoFields('Travel Method');
-	}
-}
-?>
-<!-- ##################### -->

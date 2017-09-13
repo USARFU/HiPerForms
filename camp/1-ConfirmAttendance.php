@@ -11,6 +11,16 @@ $doSignatureFields = ($campRecord->getField('SignatureFields_flag' == 1) ? True 
 $doBorderCrossingSignatureField = ($campRecord->getField('BorderCrossingSignatureField_flag' == 1) ? True : False);
 $includeTravelMethod = $campRecord->getField('wf_invite_TravelMethod');
 $includeGrant = $campRecord->getField('wf_invite_Grant');
+
+// Get Drop-Down List values
+if ($includeTravelMethod != "Hidden") {
+	if ($playerLevel == "High School" || $playerLevel == "HSAA") {
+		$methodOfTravelValues = $layout->getValueListTwoFields('Travel Method U18');
+	} else {
+		$methodOfTravelValues = $layout->getValueListTwoFields('Travel Method');
+	}
+}
+// ##################### -->
 ?>
 
 <div class="header background">
