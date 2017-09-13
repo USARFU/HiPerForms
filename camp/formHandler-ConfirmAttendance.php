@@ -19,6 +19,12 @@ if (empty($IDType)) {
 	
 	$U18AtStartOfEvent = ($record->getField('c_U18AtStartOfEvent') != 1 ? 0 : 1);
 	
+	## Get Form settings ##################################################
+	$SignatureFields_flag = $campRecord->getField('SignatureFields_flag');
+	$BorderCrossingSignatureField_flag = $campRecord->getField('BorderCrossingSignatureField_flag');
+	$includeTravelMethod = $campRecord->getField('wf_invite_TravelMethod');
+	$includeGrant = $campRecord->getField('wf_invite_Grant');
+	
 	## Grab submitted form data ##################################################
 	$inviteStatus = (isset($_POST['inviteStatus']) ? fix_string($_POST['inviteStatus']) : "");
 	$methodOfTravel = (isset($_POST['methodOfTravel']) ? fix_string($_POST['methodOfTravel']) : "");

@@ -102,7 +102,7 @@ if (isset($fail)) {
 			<?php
 		}
 		?>
-		</div> //attendanceYes block
+		</div>
 
 		<div class="input hidden" id="attendanceNoDiv">
 			<label for="Reason">If not attending the Event, state the reason.</label>
