@@ -25,6 +25,9 @@
   letter-spacing: 1px;
   font-variant: small-caps;
 }
+.clear-padding-top {
+  padding-top: 0;
+}
 .group {
   width: auto;
   overflow: auto;
@@ -72,13 +75,6 @@ select {
   height: 2.5em;
   box-sizing: border-box;
 }
-label + input[type="text"],
-label + input[type="email"],
-label + input[type="tel"],
-label + input[type="password"],
-label + select {
-  padding-top: 8px;
-}
 .input {
   border-top: #1F9ECD thin solid;
   padding-bottom: 10px;
@@ -87,6 +83,9 @@ label + select {
 }
 .input > p {
   padding-top: 10px;
+}
+.input label {
+  padding-top: 8px;
 }
 .left-col-16 {
   width: 16em;

@@ -32,6 +32,10 @@
   }
 }
 
+.clear-padding-top {
+  padding-top: 0;
+}
+
 .group { //group of fields
   width: auto;
   overflow: auto;
@@ -81,10 +85,6 @@ input[type="text"], input[type="email"], input[type="tel"], input[type="password
   box-sizing: border-box;
 }
 
-label + input[type="text"], label + input[type="email"], label + input[type="tel"], label + input[type="password"], label + select {
-  padding-top: 8px;
-}
-
 .input {
   border-top: #1F9ECD thin solid;
   padding-bottom: 10px;
@@ -93,6 +93,10 @@ label + input[type="text"], label + input[type="email"], label + input[type="tel
 
   & > p {
     padding-top: 10px;
+  }
+
+  label {
+    padding-top: 8px;
   }
 }
 

@@ -70,7 +70,7 @@ if (isset($fail)) {
 		<legend>Attendance</legend>
 
 		<div class="input" style="border-top: none;">
-			<label for="attendance" class="left-col-16">Will You Be Attending?*</label>
+			<label for="attendance" class="left-col-16 clear-padding-top">Will You Be Attending?*</label>
 			<div class="<?php if (empty($inviteStatus)) {
 				echo 'missing';
 			} ?>">
@@ -122,7 +122,7 @@ if (isset($fail)) {
 		if ($includeGrant != "Hidden") {
 			?>
 			<div class="input">
-				<label for="Grant" class="left-col-16">Applying for a Grant?</label>
+				<label for="Grant" class="left-col-16 clear-padding-top">Applying for a Grant?</label>
 				<input type='checkbox' class='checkbox' id="Grant" name='feePayMethod'
 						 title="Check this to apply for a Grant/Scholarship."
 						 value='Scholarship' <?php if ($feePayMethod == "Scholarship") {
