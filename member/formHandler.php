@@ -1484,6 +1484,18 @@ if (isset($_POST['submitted-profile'])) {
 			}
 			$Measurement_NewRecord = $result->getFirstRecord();
 			$Measurement_RecordID = $Measurement_NewRecord->getRecordId();
+			
+			// Update stored measurment data for camps/matches:
+			if (!empty($heightFeet) || !empty($heightInches) || !empty($heightMeters) || !empty($Weight) ) {
+				$newPerformScript = $fm->newPerformScriptCommand('Member-Tab2-Profile', 'Update Stored Measurement Values', $ID_Personnel);
+				$scriptResult = $newPerformScript->execute();
+				if (FileMaker::isError($scriptResult)) {
+					echo "<p>Error: There was a problem updating your measurements. Please send a note to tech@hiperforms.com with the following information so they can review your record: </p>"
+						. "<p>Error Code 219: " . $scriptResult->getMessage() . "</p>";
+					die();
+				}
+			}
+			
 			// Audit:
 			$z_storeRequest = $fm->newFindCommand('ScheduleAudit');
 			$z_storeResults = $z_storeRequest->execute();
