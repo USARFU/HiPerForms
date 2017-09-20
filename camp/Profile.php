@@ -855,6 +855,11 @@
 						. "<p>Error Code 224: " . $result->getMessage() . "</p>";
 					exit;
 				}
+				
+				// Update stored measurment data for camps/matches:
+				$newPerformScript = $fm->newPerformScriptCommand('PHP-MeasurementsRelated', 'Trigger Measurement Field Update (ID_Personnel ; Action )', $ID_Personnel);
+				$scriptResult = $newPerformScript->execute();
+				
 			}
 		}
 		
@@ -1241,7 +1246,7 @@ if (!empty($fail) && isset($_POST['respondent_exists'])) {
 					}
 					?>
 				</label>
-				
+
 				<div id="FacePhoto_Dialog" title="Face Photo" class="hidden">
 					<p>This is a head-and-shoulders photo used for identification purposes by coaches and scouts.</p>
 					<div>
@@ -1274,7 +1279,7 @@ if (!empty($fail) && isset($_POST['respondent_exists'])) {
 					</div>
 
 				</div>
-				
+
 			</div>
 			
 			<?php
@@ -1797,7 +1802,7 @@ if (!empty($fail) && isset($_POST['respondent_exists'])) {
 		<?php
 		if (($includeMedications != "Hidden" && $CampRole == "Player") || !empty($IDType)) {
 			?>
-			
+
 			<div class="input">
 				<label class="top" for="Medications">Are you prescribed any medication? If yes, please explain any instructions.
 					<?php if ($includeMedications == "Mandatory") {
@@ -2048,39 +2053,39 @@ if (!empty($fail) && isset($_POST['respondent_exists'])) {
 		<?php
 		if ($CampRole == "Player" || !empty($IDType)) {
 			if ($includeStartedPlayingFields != "Hidden") {
-			?>
+				?>
 
-			<div class="input">
-				<label for="YearStarted">When Did You Start Playing Rugby?
-					<?php if ($includeStartedPlayingFields == "Mandatory") {
-						echo '*';
-					} ?>
-				</label>
-				
-				<?php $required = $includeStartedPlayingFields == "Mandatory" ? "yes" : "no"; ?>
+				<div class="input">
+					<label for="YearStarted">When Did You Start Playing Rugby?
+						<?php if ($includeStartedPlayingFields == "Mandatory") {
+							echo '*';
+						} ?>
+					</label>
+					
+					<?php $required = $includeStartedPlayingFields == "Mandatory" ? "yes" : "no"; ?>
 
-				<div class="rightcolumn">
-					<fieldset class="field" style="width: 4em;">
-						<legend>Year</legend>
-						<input name="yearStartedPlaying" type="text" size="6" id="YearStarted"
-								 title="The year you started playing rugby." <?php recallText((empty($yearStartedPlaying) ? "" : $yearStartedPlaying), $required); ?> />
-					</fieldset>
-					<fieldset class="field" style="width: 4em;">
-						<legend>Month</legend>
-						<select name="monthStartedPlaying" size="1" id="MonthStarted" title="Month">
-							<option value="">&nbsp;</option>
-							<?php
-							for ($i = 1 ; $i < 13 ; $i++) {
-								echo "<option value='" . $i . "' " . ($monthStartedPlaying == $i ? "selected='selected'>" : ">") . $i . "</option>";
-							}
-							?>
-						</select>
-					</fieldset>
+					<div class="rightcolumn">
+						<fieldset class="field" style="width: 4em;">
+							<legend>Year</legend>
+							<input name="yearStartedPlaying" type="text" size="6" id="YearStarted"
+									 title="The year you started playing rugby." <?php recallText((empty($yearStartedPlaying) ? "" : $yearStartedPlaying), $required); ?> />
+						</fieldset>
+						<fieldset class="field" style="width: 4em;">
+							<legend>Month</legend>
+							<select name="monthStartedPlaying" size="1" id="MonthStarted" title="Month">
+								<option value="">&nbsp;</option>
+								<?php
+								for ($i = 1; $i < 13; $i++) {
+									echo "<option value='" . $i . "' " . ($monthStartedPlaying == $i ? "selected='selected'>" : ">") . $i . "</option>";
+								}
+								?>
+							</select>
+						</fieldset>
+					</div>
+
 				</div>
-
-			</div>
-				
-				<?php } ?>
+			
+			<?php } ?>
 
 			<div class="input">
 				<label for="Video1">Highlight Video Link</label>
