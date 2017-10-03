@@ -25,6 +25,7 @@
 	$includeEmbark = $campRecord->getField('wf_travel_Embark');
 	$includeReturn = $campRecord->getField('wf_travel_Return');
 	$pageHeader = (empty($campRecord->getField('WebFormTravelTitle')) ? "USA Rugby Camp Travel Information" : $campRecord->getField('WebFormTravelTitle'));
+	$AdminEmailTravel = $campRecord->getField('AdminEmailUponTravelUpdate_flag');
 	#############################################################################
 
 	if (empty($IDType)) {
@@ -207,6 +208,18 @@
 				}
 			}
 			## End - Update EventPersonnel record ######
+			
+			// E-mail camp admin of change, if enabled
+			if ($AdminEmailTravel == 1){
+				$ID_EventPersonnel = $record->getField('ID');
+				$params = "Travel|" . $ID_EventPersonnel;
+				$newPerformScript = $fm->newPerformScriptCommand('PHP-EventInvite', 'eMail Camp Admin Player Update', $params);
+				$scriptResult = $newPerformScript->execute();
+				if (FileMaker::isError($scriptResult)) {
+					echo "<p>Error: " . $scriptResult->getMessage() . "</p>";
+//					die();
+				}
+			}
 
 			$message = "Thank You. Your Travel Information has been Updated.";
 		} else {
@@ -720,32 +733,6 @@ if ($playerLevel == "High School" || $playerLevel == "HSAA") {
 						?>
 					</select>
 				</div>
-			</div>
-
-			<div class="input">
-				<label for="returnArrivalDate">Date of Arrival
-					<?php if ($includeReturn == "Mandatory") {
-						echo "*";
-					} ?>
-				</label>
-				<script>
-					$(function () {
-						$("#returnArrivalDate").datepicker({
-							changeMonth: true,
-							changeYear: true
-						});
-					});
-				</script>
-				<input name="returnArrivalDate" type="text" id="returnArrivalDate"
-						 title="The date you are arriving at the event."
-					<?php
-					if ((empty($returnArrivalDate) || $returnArrivalDate == date('m/d/Y')) && $returnModeOfTransportation == "Flying" && $includeReturn == "Mandatory") {
-						echo 'class="missing"';
-					} else {
-						echo 'value="' . $returnArrivalDateSave . '"';
-					}
-					?>
-				/>
 			</div>
 
 			<div class="input">
