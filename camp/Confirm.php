@@ -26,6 +26,7 @@
 	$includeTravelMethod = $campRecord->getField('wf_invite_TravelMethod');
 	$includeGrant = $campRecord->getField('wf_invite_Grant');
 	$SubmitTitle = ($includeProfile == 1 || $includeCCPayment == 1 ? "Next" : "Submit");
+	$AdminEmailInvite = $campRecord->getField('AdminEmailUponInviteChange_flag');
 
 	// Don't load certain data checks if the Form Development Camp ID is used //
 	if (empty($IDType)) {
@@ -142,6 +143,18 @@
 				echo "<p>Error: There was a problem processing your information. Please send a note to tech@hiperforms.com with the following information so they can review your record: </p>"
 					. "<p>Error Code 202: " . $result->getMessage() . "</p>";
 				die();
+			}
+			
+			// E-mail camp admin of change, if enabled
+			if ($AdminEmailInvite == 1){
+				$ID_EventPersonnel = $record->getField('ID');
+				$params = "Invite|" . $ID_EventPersonnel;
+				$newPerformScript = $fm->newPerformScriptCommand('PHP-EventInvite', 'eMail Camp Admin Player Update', $params);
+				$scriptResult = $newPerformScript->execute();
+				if (FileMaker::isError($scriptResult)) {
+					echo "<p>Error: " . $scriptResult->getMessage() . "</p>";
+//					die();
+				}
 			}
 
 			// Either go to CC Payment Form, or say Thank You //

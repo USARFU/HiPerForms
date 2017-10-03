@@ -20,6 +20,7 @@ $description = $budgetClass . ": " . $campName . " " . $dateStarted;
 $paymentCutOff = $campRecord->getField('paymentCutOff');
 $couponCount = $campRecord->getField('c_CouponCount');
 $partialPaymentFlag = $campRecord->getField('allowPartialPayment');
+$AdminEmailPayment = $campRecord->getField('AdminEmailUponPayment_flag');
 
 if (empty($IDType)) {
 ## Redirect to HTTPS if necessary ###########################################
@@ -206,9 +207,20 @@ if ($skip != 1 && empty($IDType)) {
 				}
 
 				// Once we're finished let's redirect the user to a receipt page
-				//header('Location: thank-you-page.php');
-				//exit;
 				$message = "Thank You. Your Payment Has Been Received.";
+				
+				// E-mail camp admin of payment, if enabled
+				if ($AdminEmailPayment == 1){
+					$ID_EventPersonnel = $record->getField('ID');
+					$params = "Payment|" . $ID_EventPersonnel . "|$amount2";
+					$newPerformScript = $fm->newPerformScriptCommand('PHP-EventInvite', 'eMail Camp Admin Player Update', $params);
+					$scriptResult = $newPerformScript->execute();
+					if (FileMaker::isError($scriptResult)) {
+						echo "<p>Error: " . $scriptResult->getMessage() . "</p>";
+//					die();
+					}
+				}
+				
 			} else if ($response->declined) {
 				// Transaction declined. Set our error message.
 				$error = 'Your credit card was declined by your bank. Please try another form of payment.';

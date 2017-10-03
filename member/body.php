@@ -204,7 +204,7 @@
 			if ($MembershipStatus == "Current" || $MembershipStatus == "Pending") {
 				?>
 				<input id="t-6" name="tabbed-tabs" type="radio"
-						 onclick="window.open('https://eaglefiles.org/technical-guide?39RldjfzO8owtCykO4RB','_blank');" class="radiotab"/>
+						 onclick="window.open('https://eaglefiles.org/introduction?39RldjfzO8owtCykO4RB','_blank');" class="radiotab"/>
 				<label for="t-6" class="tabs shadow entypo-feather">Eagle Files</label>
 			<?php } else { ?>
 				<input id="t-6-disabled" name="tabbed-tabs" type="radio" class="radiotab"

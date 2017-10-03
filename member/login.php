@@ -35,7 +35,6 @@ if (isset($_POST['submitted-login'])) {
 			$result = $request->execute();
 			if (FileMaker::isError($result)) {
 				$record = "";
-//			$error = $result->getMessage();
 			} else {
 				$record = $result->getFirstRecord();
 				$Password_MD5 = $record->getField('Personnel2::Password_MD5');
@@ -631,7 +630,7 @@ if ($FindAClub) {
 							</fieldset>
 							<fieldset class="field">
 								<legend>Date of Birth</legend>
-								<input type="date" name="DOB" id="DOB" class="text" title="Date of Birth"/>
+								<input type="text" name="DOB" id="DOB" class="text DOBDate" title="Date of Birth"/>
 							</fieldset>
 						</fieldset>
 
@@ -673,13 +672,13 @@ if ($FindAClub) {
 
 							<div class="input" style="border-top: none;">
 								<label for="Search_by_City">City</label>
-								<input name="Search_by_City" type="text" id="Search_by_City"
+								<input name="Search_by_City" type="text" class="text" id="Search_by_City"
 										 size="24" <?php recallText((empty($Search_by_City) ? "" : $Search_by_City), "no"); ?> />
 							</div>
 
 							<div class="input">
 								<label for="Search_by_State">State</label>
-								<select name="Search_by_State" size="1" id="Search_by_State" title="State or Canadian Province"
+								<select name="Search_by_State" size="1" id="Search_by_State" class="text" title="State or Canadian Province"
 										  style="margin-right: 8em">
 									<option value=""></option>
 									<?php
@@ -692,7 +691,7 @@ if ($FindAClub) {
 
 							<div class="input">
 								<label for="Search_by_Name">Club Name</label>
-								<input name="Search_by_Name" type="text" id="Search_by_Name"
+								<input name="Search_by_Name" type="text" id="Search_by_Name" class="text"
 										 size="24" <?php recallText((empty($Search_by_Name) ? "" : $Search_by_Name), "no"); ?> />
 							</div>
 

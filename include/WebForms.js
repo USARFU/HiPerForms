@@ -21,6 +21,12 @@ $(document).ready(function () {
         yearRange: "-80:-4",
         defaultDate: "-20y"
     });
+    $(".DOBDate").datepicker({
+        changeMonth: true,
+        changeYear: true,
+        yearRange: "-80:-4",
+        defaultDate: "-20y"
+    });
     $(".Date-80-1").datepicker({
         changeMonth: true,
         changeYear: true,
