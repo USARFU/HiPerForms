@@ -1294,7 +1294,7 @@ if (isset($message_profile)) {
 							</select>
 						</fieldset>
 
-						<fieldset class="field" style="width: 8em; margin-right: .5em;">
+						<fieldset class="field" style="width: 9em; margin-right: .5em;">
 							<legend>Date Started*</legend>
 							<input class="Date-80-1 datepicker" type="text" name="OtherSportDateStart" id="OtherSportDateStart"
 									 title="The date you started playing the sport."
