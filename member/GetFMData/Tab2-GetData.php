@@ -47,6 +47,7 @@ $guardianValues = $layout_Tab2Profile->getValueListTwoFields('Guardian Type');
 $referenceTypeValues = $layout_Tab2Profile->getValueListTwoFields('Reference Type');
 $fifteensValues = $layout_Tab2Profile->getValueListTwoFields('Position15s');
 $sevensValues = $layout_Tab2Profile->getValueListTwoFields('Position7s');
+$sportsValues = $layout_Tab2Profile->getValueListTwoFields('OtherSports');
 $airportValues = $layout_Tab2Profile->getValueListTwoFields('Airport');
 asort($airportValues);
 
@@ -77,3 +78,12 @@ if (FileMaker::isError($related_ClubMembership)) {
 	$related_ClubMembership_count = count($related_ClubMembership);
 }
 // Delete the above for Registration-only profile //
+
+// Other Sports related records //
+// Measurements //
+$related_othersports = $record_Tab2Profile->getRelatedSet('Personnel__OtherSports');
+if (FileMaker::isError($related_othersports)) {
+	$related_othersports_count = 0;
+} else {
+	$related_othersports_count = count($related_othersports);
+}
