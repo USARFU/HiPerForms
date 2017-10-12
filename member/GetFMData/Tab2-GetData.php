@@ -80,7 +80,6 @@ if (FileMaker::isError($related_ClubMembership)) {
 // Delete the above for Registration-only profile //
 
 // Other Sports related records //
-// Measurements //
 $related_othersports = $record_Tab2Profile->getRelatedSet('Personnel__OtherSports');
 if (FileMaker::isError($related_othersports)) {
 	$related_othersports_count = 0;
