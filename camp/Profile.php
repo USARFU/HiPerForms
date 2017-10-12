@@ -64,6 +64,7 @@
 	$includeNationalEligible = $campRecord->getField('wf_profile_NationalEligible');
 	$includePositionFields = $campRecord->getField('wf_profile_Positions');
 	$includeStartedPlayingFields = $campRecord->getField('wf_profile_StartedPlaying');
+	$includeOtherSportsFields = $campRecord->getField('wf_profile_OtherSports');
 	$includePassportFields = $campRecord->getField('wf_profile_Passport');
 	$includeAirTravel = $campRecord->getField('wf_profile_AirTravel');
 	$includePartner = $campRecord->getField('wf_profile_Partner');
@@ -226,6 +227,37 @@
 		$FullMatchLink1 = (isset ($_POST['FullMatchLink1']) ? fix_string($_POST['FullMatchLink1']) : "");
 		$FullMatchLink2 = (isset ($_POST['FullMatchLink2']) ? fix_string($_POST['FullMatchLink2']) : "");
 		$FullMatchLink3 = (isset ($_POST['FullMatchLink3']) ? fix_string($_POST['FullMatchLink3']) : "");
+		
+		$OtherSport = isset($_POST['OtherSport']) ? fix_string($_POST['OtherSport']) : "";
+		$OtherSportDateStart = "";
+		$OtherSportDateStartsave = "";
+		if (isset($_POST['OtherSportDateStart'])) {
+			if (validate_date($_POST['OtherSportDateStart']) || validate_date_filemaker($_POST['OtherSportDateStart'])) {
+				$OtherSportDateStartold = new DateTime($_POST['OtherSportDateStart']);
+				$OtherSportDateStart = $OtherSportDateStartold->format('m/d/Y');
+				$OtherSportDateStartsave = $OtherSportDateStartold->format('Y-m-d');
+			} elseif (empty($_POST['OtherSportDateStart'])) {
+			} else {
+				$fail .= "The Other Sport Start Date is in the wrong format. <br />";
+				$OtherSportDateStartsave = $_POST['OtherSportDateStart'];
+			}
+		}
+		$OtherSportDateEnd = "";
+		$OtherSportDateEndsave = "";
+		if (isset($_POST['OtherSportDateEnd'])) {
+			if (validate_date($_POST['OtherSportDateEnd']) || validate_date_filemaker($_POST['OtherSportDateEnd'])) {
+				$OtherSportDateEndold = new DateTime($_POST['OtherSportDateEnd']);
+				$OtherSportDateEnd = $OtherSportDateEndold->format('m/d/Y');
+				$OtherSportDateEndsave = $OtherSportDateEndold->format('Y-m-d');
+			} elseif (empty($_POST['OtherSportDateEnd'])) {
+			
+			} else {
+				$fail .= "The Other Sport End Date is in the wrong format. <br />";
+				$OtherSportDateEndsave = $_POST['OtherSportDateEnd'];
+			}
+		}
+		$OtherSportDescription = isset($_POST['OtherSportDescription']) ? fix_string($_POST['OtherSportDescription']) : "";
+		$OtherSport_Delete = isset($_POST['OtherSport_Delete']) ? $_POST['OtherSport_Delete'] : "";
 		
 		$passportHolder = (isset ($_POST['passportHolder']) ? fix_string($_POST['passportHolder']) : "");
 		$passportNumber = (isset ($_POST['passportNumber']) ? fix_string($_POST['passportNumber']) : "");
@@ -399,6 +431,14 @@
 			$countMeasurement = $measurementResult->getFoundSetCount();
 			$related_measurement_records = $record->getRelatedSet('EventPersonnel__Personnel__Measurement');
 			$related_measurement = $related_measurement_records[0];
+		}
+		
+		## Get Related Other Sports Records ########################################
+		$related_othersports = $record->getRelatedSet('EventPersonnel__OtherSports');
+		if (FileMaker::isError($related_othersports)) {
+			$related_othersports_count = 0;
+		} else {
+			$related_othersports_count = count($related_othersports);
 		}
 		
 		## Get Related Primary ClubMembership Record #############################
@@ -861,6 +901,35 @@
 				$scriptResult = $newPerformScript->execute();
 				
 			}
+			
+			// Other Sports //
+			if (!empty($OtherSport) && !empty($OtherSportDateStart)) {
+				$OtherSport_data = array(
+					'ID_Personnel' => $ID_Personnel,
+					'Sport' => $OtherSport,
+					'DateStarted' => $OtherSportDateStart,
+					'DateEnded' => $OtherSportDateEnd,
+					'Description' => $OtherSportDescription,
+				);
+				$newOtherSportRequest =& $fm->newAddCommand('PHP-OtherSportsRelated', $OtherSport_data);
+				$result = $newOtherSportRequest->execute();
+				if (FileMaker::isError($result)) {
+					echo "<p>Error: There was a problem adding a new Other Sports record to your profile. Please send a note to tech@hiperforms.com with the following information so they can review your record: </p>"
+						. "<p>Error Code 218: " . $result->getMessage() . "</p>";
+					exit;
+				}
+				unset($OtherSport);
+				unset($OtherSportDateStart);
+				unset($OtherSportDateEnd);
+			}
+			
+			foreach ($OtherSport_Delete as $key => $value) {
+				if ($value == 1) {
+					$RecordID = $key;
+					$deleteOtherSport = $fm->NewDeleteCommand('PHP-OtherSportsRelated', $RecordID);
+					$resultDelete = $deleteOtherSport->execute();
+				}
+			}
 		}
 		
 		if (!empty($FacePhotoCropPath) || !empty($ProofOfDOBCropPath) || !empty($InsuranceCardCropPath) || !empty($PassportCropPath) || !empty($OtherTravelCropPath)) {
@@ -887,6 +956,14 @@
 		$record = $result->getFirstRecord();
 		$related_personnel_records = $record->getRelatedSet('EventPersonnel__Personnel');
 		$related_personnel = $related_personnel_records[0];
+		
+		## Get Related Other Sports Records ########################################
+		$related_othersports = $record->getRelatedSet('EventPersonnel__OtherSports');
+		if (FileMaker::isError($related_othersports)) {
+			$related_othersports_count = 0;
+		} else {
+			$related_othersports_count = count($related_othersports);
+		}
 		
 		if (!empty($fail)) {
 			//## Red Field Borders on required fields that failed
@@ -1143,6 +1220,7 @@
 	}
 	$guardianValues = $layout->getValueListTwoFields('Parent Guardian Type');
 	$relationshipValues = $layout->getValueListTwoFields('Relationship');
+	$othersportsValues = $layout->getValueListTwoFields('Other Sport');
 	?>
 
 </head>
@@ -1202,7 +1280,7 @@ if (!empty($fail) && isset($_POST['respondent_exists'])) {
 	</li>
 </ul>
 
-<form action="Profile.php" method="post" enctype="multipart/form-data">
+<form id="mainForm"  action="Profile.php" method="post" enctype="multipart/form-data">
 
 	<fieldset class="group">
 		<legend>Confirm and Update Your Information</legend>
@@ -1646,7 +1724,7 @@ if (!empty($fail) && isset($_POST['respondent_exists'])) {
 					<option value="">&nbsp;</option>
 					<?php
 					foreach ($stateValues as $value) {
-						echo "<option value=\"" . $value . "\"" . ($State_a == $value ? "selected=\"selected\">" : ">") . $value . "</option>";
+						echo "<option value='" . $value . "' " . ($State_a == $value ? "selected=\"selected\">" : ">") . $value . "</option>";
 					}
 					?>
 				</select>
@@ -1666,7 +1744,7 @@ if (!empty($fail) && isset($_POST['respondent_exists'])) {
 				<option value="">&nbsp;</option>
 				<?php
 				foreach ($countryValues as $value) {
-					echo "<option value=\"" . $value . "\"" . ($Country_a == $value ? "selected=\"selected\">" : ">") . $value . "</option>";
+					echo "<option value='" . $value . "' " . ($Country_a == $value ? "selected=\"selected\">" : ">") . $value . "</option>";
 				}
 				?>
 			</select>
@@ -2110,7 +2188,116 @@ if (!empty($fail) && isset($_POST['respondent_exists'])) {
 				<input name="FullMatchLink3" type="text" size="70" id="Video4"
 					<?php recallText((empty($FullMatchLink3) ? "" : $FullMatchLink3), "no"); ?> />
 			</div>
+			
 			<?php
+			if ($includeOtherSportsFields != "Hidden") {
+				?>
+
+				<div class="input">
+					<label>Other Sport Experiences</label>
+					<div class="rightcolumn">
+						<label class="top">Add a new record</label>
+
+						<div class="row">
+							<fieldset class="field" style="width: 9em; margin-right: .5em;">
+								<legend>Sport*</legend>
+								<select name="OtherSport" id="OtherSport" size="1" title="The sport you have prior experience with.">
+									<option value="">&nbsp;</option>
+									<?php
+									foreach ($othersportsValues as $value) {
+										echo "<option value='" . $value . "' " . ($OtherSport == $value ? "selected='selected'>" : ">") . $value . "</option>";
+									}
+									?>
+								</select>
+							</fieldset>
+
+							<fieldset class="field" style="width: 12em; margin-right: .5em;">
+								<legend>Date Started*</legend>
+								<input class="Date-80-1 datepicker" type="text" name="OtherSportDateStart" id="OtherSportDateStart"
+										 title="The date you started playing the sport."
+									<?php if (empty($OtherSportDateStart) || $OtherSportDateStart == date('m/d/Y')) {
+									} else {
+										echo "value=$OtherSportDateStartsave";
+									} ?> />
+							</fieldset>
+
+							<fieldset class="field" style="width: 10em;">
+								<legend>Date Ended</legend>
+								<input class="Date-80-1 datepicker" type="text" name="OtherSportDateEnd" id="OtherSportDateEnd"
+										 title="The date you finished playing the sport."
+									<?php if (empty($OtherSportDateEnd) || $OtherSportDateEnd == date('m/d/Y')) {
+									} else {
+										echo "value=$OtherSportDateEndsave";
+									} ?> />
+							</fieldset>
+						</div>
+
+						<div class="row">
+							<fieldset class="field" style="width: 100%;">
+								<legend>Description</legend>
+								<textarea name="OtherSportDescription" title="Description of your experience" style="width: 98%;" form="mainForm"
+											 rows="2" maxlength="1000"></textarea>
+							</fieldset>
+						</div>
+
+					</div>
+					
+					<?php
+					if ($related_othersports_count > 0) {
+						?>
+
+						<div class="rightcolumn">
+							<label class="top">Existing Records</label>
+							
+							<?php
+							foreach ($related_othersports as $othersport_record) {
+								$OtherSport_RecordID = $othersport_record->getRecordID();
+								$OtherSport_Sport = empty($othersport_record->getField('EventPersonnel__OtherSports::Sport')) ? '-' : $othersport_record->getField('EventPersonnel__OtherSports::Sport');
+								$OtherSport_DateStarted = empty($othersport_record->getField('EventPersonnel__OtherSports::DateStarted')) ? '-' : $othersport_record->getField('EventPersonnel__OtherSports::DateStarted');
+								$OtherSport_DateEnded = empty($othersport_record->getField('EventPersonnel__OtherSports::DateEnded')) ? '-' : $othersport_record->getField('EventPersonnel__OtherSports::DateEnded');
+								$OtherSport_Description = empty($othersport_record->getField('EventPersonnel__OtherSports::Description')) ? '-' : $othersport_record->getField('EventPersonnel__OtherSports::Description');
+								?>
+
+								<div class='row row-divider row-divider-color'>
+									<fieldset class='field' style='width: 14%'>
+										<legend>Sport</legend>
+										<?php echo $OtherSport_Sport; ?>
+									</fieldset>
+									<fieldset class='field' style='width: 20%'>
+										<legend>Date Started</legend>
+										<?php echo $OtherSport_DateStarted; ?>
+									</fieldset>
+									<fieldset class='field' style='width: 20%'>
+										<legend>Date Ended</legend>
+										<?php echo $OtherSport_DateEnded; ?>
+									</fieldset>
+									<fieldset class='field' style='width: 10%'>
+										<legend>Delete</legend>
+										<input class='alpha50' name='OtherSport_Delete[<?php echo $OtherSport_RecordID; ?>]' type='checkbox' value='1'
+												 title='Select this to delete the record'/>
+									</fieldset>
+
+									<div class="row">
+										<fieldset class='field' style='width: 97%'>
+											<legend>Description</legend>
+											<?php echo $OtherSport_Description; ?>
+										</fieldset>
+									</div>
+								</div>
+								
+								<?php
+							}
+							?>
+
+						</div>
+						
+						<?php
+					}
+					?>
+				</div>
+				
+				<?php
+			}
 		}
 		?>
 		
