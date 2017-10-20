@@ -41,7 +41,7 @@ if (isset($message_profile)) {
 <?php if (!empty($fail) && !empty($_POST['submitted-profile'])) { ?>
 	<table style="width:100%; border:0; padding: 2px; background-color: #eeeeee">
 		<tr>
-			<td>Your Profile could not be updated due to the following problems:
+			<td>Your Profile could not be completely updated due to the following problems:
 				<p style="color: red"><i>
 						<?php echo $fail; ?>
 					</i></p>
@@ -437,7 +437,7 @@ if (isset($message_profile)) {
 								echo "mandatoryFailed";
 							} else {
 								echo "mandatory";
-							} ?>">REQUIRED</span><br />
+							} ?>">REQUIRED</span><br/>
 					<small>(Emergency Contact)</small>
 				</label>
 				<div class="rightcolumn">
@@ -918,10 +918,10 @@ if (isset($message_profile)) {
 		<?php
 		if ($IsPlayer) {
 			?>
-			
+
 			<div class="input">
 				<label for="YearStarted">When Did You Start Playing Rugby?</label>
-				
+
 				<div class="rightcolumn">
 					<fieldset class="field" style="width: 4em;">
 						<legend>Year</legend>
@@ -933,14 +933,14 @@ if (isset($message_profile)) {
 						<select name="monthStartedPlaying" size="1" id="MonthStarted" title="Month">
 							<option value="">&nbsp;</option>
 							<?php
-							for ($i = 1 ; $i < 13 ; $i++) {
+							for ($i = 1; $i < 13; $i++) {
 								echo "<option value='" . $i . "' " . ($monthStartedPlaying == $i ? "selected='selected'>" : ">") . $i . "</option>";
 							}
 							?>
 						</select>
 					</fieldset>
 				</div>
-				
+
 			</div>
 
 			<div class="input">
@@ -984,60 +984,60 @@ if (isset($message_profile)) {
 			<div class="input">
 				<label for="15sPosition">15s Position</label>
 				<div class="rightcolumn">
-						<fieldset class="field">
-							<legend>Primary</legend>
+					<fieldset class="field">
+						<legend>Primary</legend>
 
-							<select name="primary15sPosition" size="1" id="15sPosition">
-								<option value="">&nbsp;</option>
-								<?php
-								foreach ($fifteensValues as $value) {
-									echo "<option value='" . $value . "' " . ($primary15sPosition == $value ? "selected='selected'>" : ">") . $value . "</option>";
-								}
-								?></select>
+						<select name="primary15sPosition" size="1" id="15sPosition">
+							<option value="">&nbsp;</option>
+							<?php
+							foreach ($fifteensValues as $value) {
+								echo "<option value='" . $value . "' " . ($primary15sPosition == $value ? "selected='selected'>" : ">") . $value . "</option>";
+							}
+							?></select>
 
-						</fieldset>
-						<fieldset class="field" style="margin-right: .5em;">
-							<legend>Secondary</legend>
+					</fieldset>
+					<fieldset class="field" style="margin-right: .5em;">
+						<legend>Secondary</legend>
 
-							<select name="secondary15sPosition" size="1" id="15sPosition">
-								<option value="">&nbsp;</option>
-								<?php
-								foreach ($fifteensValues as $value) {
-									echo "<option value='" . $value . "' " . ($secondary15sPosition == $value ? "selected='selected'>" : ">") . $value . "</option>";
-								}
-								?></select>
+						<select name="secondary15sPosition" size="1" id="15sPosition">
+							<option value="">&nbsp;</option>
+							<?php
+							foreach ($fifteensValues as $value) {
+								echo "<option value='" . $value . "' " . ($secondary15sPosition == $value ? "selected='selected'>" : ">") . $value . "</option>";
+							}
+							?></select>
 
-						</fieldset>
+					</fieldset>
 				</div>
 			</div>
 
 			<div class="input">
 				<label for="7sPosition">7s Position</label>
 				<div class="rightcolumn">
-						<fieldset class="field">
-							<legend>Primary</legend>
+					<fieldset class="field">
+						<legend>Primary</legend>
 
-							<select name="primary7sPosition" size="1" id="7sPosition">
-								<option value="">&nbsp;</option>
-								<?php
-								foreach ($sevensValues as $value) {
-									echo "<option value='" . $value . "' " . ($primary7sPosition == $value ? "selected='selected'>" : ">") . $value . "</option>";
-								}
-								?></select>
+						<select name="primary7sPosition" size="1" id="7sPosition">
+							<option value="">&nbsp;</option>
+							<?php
+							foreach ($sevensValues as $value) {
+								echo "<option value='" . $value . "' " . ($primary7sPosition == $value ? "selected='selected'>" : ">") . $value . "</option>";
+							}
+							?></select>
 
-						</fieldset>
-						<fieldset class="field" style="margin-right: .5em;">
-							<legend>Secondary</legend>
+					</fieldset>
+					<fieldset class="field" style="margin-right: .5em;">
+						<legend>Secondary</legend>
 
-							<select name="secondary7sPosition" size="1" id="7sPosition">
-								<option value="">&nbsp;</option>
-								<?php
-								foreach ($sevensValues as $value) {
-									echo "<option value='" . $value . "' " . ($secondary7sPosition == $value ? "selected='selected'>" : ">") . $value . "</option>";
-								}
-								?></select>
+						<select name="secondary7sPosition" size="1" id="7sPosition">
+							<option value="">&nbsp;</option>
+							<?php
+							foreach ($sevensValues as $value) {
+								echo "<option value='" . $value . "' " . ($secondary7sPosition == $value ? "selected='selected'>" : ">") . $value . "</option>";
+							}
+							?></select>
 
-						</fieldset>
+					</fieldset>
 				</div>
 			</div>
 
@@ -1274,7 +1274,113 @@ if (isset($message_profile)) {
 				
 				<?php
 			}
-		} ## /Primary Role display of Measurements, Attributes, and Performance ?>
+			?>
+
+			<div class="input">
+				<label>Other Sport Experiences</label>
+				<div class="rightcolumn">
+					<label class="top">Add a new record</label>
+
+					<div class="row">
+						<fieldset class="field" style="width: 9em; margin-right: .5em;">
+							<legend>Sport*</legend>
+							<select name="OtherSport" id="OtherSport" size="1" title="The sport you have prior experience with.">
+								<option value="">&nbsp;</option>
+								<?php
+								foreach ($sportsValues as $value) {
+									echo "<option value='" . $value . "' " . ($OtherSport == $value ? "selected='selected'>" : ">") . $value . "</option>";
+								}
+								?>
+							</select>
+						</fieldset>
+
+						<fieldset class="field" style="width: 12em; margin-right: .5em;">
+							<legend>Date Started*</legend>
+							<input class="Date-80-1 datepicker" type="text" name="OtherSportDateStart" id="OtherSportDateStart"
+									 title="The date you started playing the sport."
+								<?php if (empty($OtherSportDateStart) || $OtherSportDateStart == date('m/d/Y')) {
+								} else {
+									echo "value=$OtherSportDateStartsave";
+								} ?> />
+						</fieldset>
+
+						<fieldset class="field" style="width: 10em;">
+							<legend>Date Ended</legend>
+							<input class="Date-80-1 datepicker" type="text" name="OtherSportDateEnd" id="OtherSportDateEnd"
+									 title="The date you finished playing the sport."
+								<?php if (empty($OtherSportDateEnd) || $OtherSportDateEnd == date('m/d/Y')) {
+								} else {
+									echo "value=$OtherSportDateEndsave";
+								} ?> />
+						</fieldset>
+					</div>
+
+					<div class="row">
+						<fieldset class="field" style="width: 100%;">
+							<legend>Description</legend>
+							<textarea name="OtherSportDescription" title="Description of your experience" style="width: 99%;" form="mainForm"
+										 rows="2" maxlength="1000"></textarea>
+						</fieldset>
+					</div>
+
+				</div>
+				
+				<?php
+				if ($related_othersports_count > 0) {
+					?>
+
+					<div class="rightcolumn">
+						<label class="top">Existing Records</label>
+						
+						<?php
+						foreach ($related_othersports as $othersport_record) {
+							$OtherSport_RecordID = $othersport_record->getRecordID();
+							$OtherSport_Sport = empty($othersport_record->getField('Personnel__OtherSports::Sport')) ? '-' : $othersport_record->getField('Personnel__OtherSports::Sport');
+							$OtherSport_DateStarted = empty($othersport_record->getField('Personnel__OtherSports::DateStarted')) ? '-' : $othersport_record->getField('Personnel__OtherSports::DateStarted');
+							$OtherSport_DateEnded = empty($othersport_record->getField('Personnel__OtherSports::DateEnded')) ? '-' : $othersport_record->getField('Personnel__OtherSports::DateEnded');
+							$OtherSport_Description = empty($othersport_record->getField('Personnel__OtherSports::Description')) ? '-' : $othersport_record->getField('Personnel__OtherSports::Description');
+							?>
+
+							<div class='row row-divider row-divider-color'>
+								<fieldset class='field' style='width: 16%'>
+									<legend>Sport</legend>
+									<?php echo $OtherSport_Sport; ?>
+								</fieldset>
+								<fieldset class='field' style='width: 26%'>
+									<legend>Date Started</legend>
+									<?php echo $OtherSport_DateStarted; ?>
+								</fieldset>
+								<fieldset class='field' style='width: 27%'>
+									<legend>Date Ended</legend>
+									<?php echo $OtherSport_DateEnded; ?>
+								</fieldset>
+								<fieldset class='field' style='width: 16%'>
+									<legend>Delete</legend>
+									<input class='alpha50' name='OtherSport_Delete[<?php echo $OtherSport_RecordID; ?>]' type='checkbox' value='1'
+											 title='Select this to delete the record'/>
+								</fieldset>
+
+								<div class="row">
+									<fieldset class='field' style='width: 27%'>
+										<legend>Description</legend>
+										<?php echo $OtherSport_Description; ?>
+									</fieldset>
+								</div>
+							</div>
+							
+							<?php
+						}
+						?>
+
+					</div>
+					
+					<?php
+				}
+				?>
+			</div>
+			
+			<?php
+		} ## /Player display of Measurements and Other Sports Experience ?>
 
 
 	</fieldset>

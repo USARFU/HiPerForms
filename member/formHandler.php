@@ -734,11 +734,11 @@ if (!$RegistrationActivate) {
 			$fail .= "You must specify at least one club membership.";
 		}
 		
-		if ($DoNotBelongToAClub_flag == 1 && empty($NoClub_Role)){
+		if ($DoNotBelongToAClub_flag == 1 && empty($NoClub_Role)) {
 			$fail .= "You must specify your role.";
 		}
 		
-		if ($UnlistedClub_flag != 1 && $DoNotBelongToAClub_flag != 1 && (!empty($ID_Club) && (empty($ClubRole) || empty($StartDate)) )) {
+		if ($UnlistedClub_flag != 1 && $DoNotBelongToAClub_flag != 1 && (!empty($ID_Club) && (empty($ClubRole) || empty($StartDate)))) {
 			$fail .= validate_empty_field($ClubRole, 'Club Role');
 			$fail .= validate_empty_field($StartDate, 'Club Start Date');
 		}
@@ -764,7 +764,7 @@ if (!$RegistrationActivate) {
 		// Club Membership //
 		if ((!empty($ID_Club) || $UnlistedClub_flag == 1 || $DoNotBelongToAClub_flag == 1) && empty($fail)) {
 			$ID_Club = $UnlistedClub_flag == 1 ? "NotInList" : $ID_Club;
-			if ($UnlistedClub_flag == 1){
+			if ($UnlistedClub_flag == 1) {
 				$CalculatedRole = $UnlistedClub_Role;
 				$CalculatedStartDate = $UnlistedClub_StartDate;
 			} elseif ($DoNotBelongToAClub_flag == 1) {
@@ -833,7 +833,7 @@ if (!$RegistrationActivate) {
 				}
 				</style>';
 			
-		} elseif (!$RegistrationActivate && empty($fail) ) {
+		} elseif (!$RegistrationActivate && empty($fail)) {
 			//Refresh record so that field variables have updated values
 //			include 'GetFMData/Registration2.php';
 			//Go to next tab automatically
@@ -881,7 +881,7 @@ if (isset($_POST['submitted-profile'])) {
 		$Country = (isset ($_POST['Country']) ? fix_string($_POST['Country']) : "");
 		$PrimaryPhoneNumber = (isset ($_POST['PrimaryPhoneNumber']) ? fix_string($_POST['PrimaryPhoneNumber']) : "");
 		$PrimaryPhoneText_flag = isset ($_POST['PrimaryPhoneText_flag']) ? 1 : "";
-		if (isset ($_POST['MembershipID'])){
+		if (isset ($_POST['MembershipID'])) {
 			$MembershipID_old = $_POST['MembershipID_old'];
 			$MembershipID = fix_string($_POST['MembershipID']);
 		} else {
@@ -935,7 +935,7 @@ if (isset($_POST['submitted-profile'])) {
 			die();
 		}
 		
-		if ($MembershipID != $MembershipID_old){
+		if ($MembershipID != $MembershipID_old) {
 			$newPerformScript = $fm->newPerformScriptCommand('Member-Header', 'Retrieve Webpoint Data', $ID_Personnel);
 			$scriptResult = $newPerformScript->execute();
 			if (FileMaker::isError($scriptResult)) {
@@ -1043,6 +1043,38 @@ if (isset($_POST['submitted-profile'])) {
 	$Handspan_UM = isset($_POST['Handspan_UM']) ? fix_string($_POST['Handspan_UM']) : "in";
 	$StandingReach = isset($_POST['StandingReach']) ? fix_string($_POST['StandingReach']) : "";
 	$StandingReach_UM = isset($_POST['StandingReachUM']) ? fix_string($_POST['StandingReach_UM']) : "in";
+	
+	$OtherSport = isset($_POST['OtherSport']) ? fix_string($_POST['OtherSport']) : "";
+	$OtherSportDateStart = "";
+	$OtherSportDateStartsave = "";
+	if (isset($_POST['OtherSportDateStart'])) {
+		if (validate_date($_POST['OtherSportDateStart']) || validate_date_filemaker($_POST['OtherSportDateStart'])) {
+			$OtherSportDateStartold = new DateTime($_POST['OtherSportDateStart']);
+			$OtherSportDateStart = $OtherSportDateStartold->format('m/d/Y');
+			$OtherSportDateStartsave = $OtherSportDateStartold->format('Y-m-d');
+		} elseif (empty($_POST['OtherSportDateStart'])) {
+		} else {
+			$fail .= "The Other Sport Start Date is in the wrong format. <br />";
+			$OtherSportDateStartsave = $_POST['OtherSportDateStart'];
+		}
+	}
+	$OtherSportDateEnd = "";
+	$OtherSportDateEndsave = "";
+	if (isset($_POST['OtherSportDateEnd'])) {
+		if (validate_date($_POST['OtherSportDateEnd']) || validate_date_filemaker($_POST['OtherSportDateEnd'])) {
+			$OtherSportDateEndold = new DateTime($_POST['OtherSportDateEnd']);
+			$OtherSportDateEnd = $OtherSportDateEndold->format('m/d/Y');
+			$OtherSportDateEndsave = $OtherSportDateEndold->format('Y-m-d');
+		} elseif (empty($_POST['OtherSportDateEnd'])) {
+			
+		} else {
+			$fail .= "The Other Sport End Date is in the wrong format. <br />";
+			$OtherSportDateEndsave = $_POST['OtherSportDateEnd'];
+		}
+	}
+	$OtherSportDescription = isset($_POST['OtherSportDescription']) ? fix_string($_POST['OtherSportDescription']) : "";
+	$OtherSport_Delete = isset($_POST['OtherSport_Delete']) ? $_POST['OtherSport_Delete'] : "";
+//	$fail .= print_r($OtherSport_Delete);
 	
 	$healthInsuranceCompany = isset ($_POST['healthInsuranceCompany']) ? fix_string($_POST['healthInsuranceCompany']) : "";
 	$healthPlanID = isset ($_POST['healthPlanID']) ? fix_string($_POST['healthPlanID']) : "";
@@ -1177,7 +1209,7 @@ if (isset($_POST['submitted-profile'])) {
 		$image_DOB = $images_DOB[0];
 		$name_DOB = $image_DOB['output']['name'];
 		$data_DOB = $image_DOB['output']['data'];
-		
+
 //		if (empty($ProofOfDOB64) && empty($name_DOB) && $IsPlayer) {
 //			$fail .= "Your Proof of DOB is required.";
 //		}
@@ -1198,7 +1230,7 @@ if (isset($_POST['submitted-profile'])) {
 		if (empty($ProofOfSchool64) && empty($name_school) && $IsPlayer && $U18) {
 			$fail .= "Your Proof of School attendance is required. <br />";
 		}
-
+		
 		// store the file
 		if (!empty($name_school)) {
 			$file_school = Slim::saveFile($data_school, $name_school, '../tmp/');
@@ -1486,7 +1518,7 @@ if (isset($_POST['submitted-profile'])) {
 			$Measurement_RecordID = $Measurement_NewRecord->getRecordId();
 			
 			// Update stored measurment data for camps/matches:
-			if (!empty($heightFeet) || !empty($heightInches) || !empty($heightMeters) || !empty($Weight) ) {
+			if (!empty($heightFeet) || !empty($heightInches) || !empty($heightMeters) || !empty($Weight)) {
 				$newPerformScript = $fm->newPerformScriptCommand('Member-Tab2-Profile', 'Update Stored Measurement Values', $ID_Personnel);
 				$scriptResult = $newPerformScript->execute();
 				if (FileMaker::isError($scriptResult)) {
@@ -1512,6 +1544,35 @@ if (isset($_POST['submitted-profile'])) {
 			unset($Wingspan);
 			unset($Handspan);
 			unset($StandingReach);
+		}
+		
+		// Other Sports //
+		if (!empty($OtherSport) && !empty($OtherSportDateStart)) {
+			$OtherSport_data = array(
+				'ID_Personnel' => $ID_Personnel,
+				'Sport' => $OtherSport,
+				'DateStarted' => $OtherSportDateStart,
+				'DateEnded' => $OtherSportDateEnd,
+				'Description' => $OtherSportDescription,
+			);
+			$newOtherSportRequest =& $fm->newAddCommand('Personnel__OtherSports', $OtherSport_data);
+			$result = $newOtherSportRequest->execute();
+			if (FileMaker::isError($result)) {
+				echo "<p>Error: There was a problem adding a new Other Sports record to your profile. Please send a note to tech@hiperforms.com with the following information so they can review your record: </p>"
+					. "<p>Error Code 218: " . $result->getMessage() . "</p>";
+				exit;
+			}
+			unset($OtherSport);
+			unset($OtherSportDateStart);
+			unset($OtherSportDateEnd);
+		}
+		
+		foreach ($OtherSport_Delete as $key => $value) {
+			if ($value == 1) {
+				$RecordID = $key;
+				$deleteOtherSport = $fm->NewDeleteCommand('Personnel__OtherSports', $RecordID);
+				$resultDelete = $deleteOtherSport->execute();
+			}
 		}
 		
 		// Refresh data //
