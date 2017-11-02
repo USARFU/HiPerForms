@@ -16,8 +16,29 @@ if (FileMaker::isError($result_Registration2)) {
 $records_Registration2 = $result_Registration2->getRecords();
 $record_Registration2 = $result_Registration2->getFirstRecord();
 
-$clubValues = $layout_Registration2->getValueListTwoFields('Club.NonInvitational');
+// workaround FM update breaking relational filter of value lists
+// make your own array instead of using getValueTwoFields
+$requestClubVL = $fm->newFindCommand('Club Value List');
+$requestClubVL->addFindCriterion('InvitationalFlag', '=');
+$requestClubVL->addFindCriterion('ID', '*');
+
+$resultClubVL = $requestClubVL->execute();
+if (FileMaker::isError($resultClubVL)) {
+	echo "<p>Error: There was a problem processing your information. Please send a note to tech@hiperforms.com with the following information so they can review your record: </p>"
+		. "<p>Error Code 1301: " . $resultClubVL->getMessage() . "</p>";
+	die();
+}
+$recordsClubVL = $resultClubVL->getRecords();
+
+$clubValues = array();
+
+foreach ($recordsClubVL as $recordClubVL) {
+	$clubValues[$recordClubVL->getField('ID')] = $recordClubVL->getField('c_clubNameLong');
+}
+
+//$clubValues = $layout_Registration2->getValueListTwoFields('Club.NonInvitational');
 asort($clubValues);
+
 $clubRoleValues = $layout_Registration2->getValueListTwoFields('Role.Registration');
 
 // Club Membership //

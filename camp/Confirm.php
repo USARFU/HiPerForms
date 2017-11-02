@@ -66,19 +66,19 @@
 		$sigMediaReleaseLength = (isset ($_POST['sigMediaReleaseB30']) ? strlen($_POST['sigMediaReleaseB30']) : 0);
 
 		if (empty($signatureConsent)) {
-			$signatureConsent = $record->getField('ParentSignatureInformedConsent64');
+			$signatureConsent = $record->getField('SignatureInformedConsent64');
 		}
 		if (empty($signatureMedical)) {
-			$signatureMedical = $record->getField('ParentSignatureMedicalRelease64');
+			$signatureMedical = $record->getField('SignatureMedicalRelease64');
 		}
 		if (empty($sigConductPlayer)) {
-			$sigConductPlayer = $record->getField('PlayerSigConduct64');
+			$sigConductPlayer = $record->getField('SignatureConductPlayer64');
 		}
 		if (empty($sigConductParent)) {
-			$sigConductParent = $record->getField('ParentSigConduct64');
+			$sigConductParent = $record->getField('SignatureConductParent64');
 		}
 		if (empty($sigMediaRelease)) {
-			$sigMediaRelease = $record->getField('ParentSigMediaRelease64');
+			$sigMediaRelease = $record->getField('SignatureMediaRelease64');
 		}
 	} else { // End if(empty($IDType))
 		$signatureConsentLength = (isset ($_POST['signatureConsentB30']) ? strlen($_POST['signatureConsentB30']) : 0);
@@ -132,11 +132,11 @@
 			$edit->setField('reasonForNotAttending', $reasonForNotAttending);
 			$edit->setField('feePayMethod', $feePayMethod);
 			if ($SignatureOption == "All Players" || ($SignatureOption == "U18 Players" && $U18AtStartOfEvent == 1)) {
-				$edit->setField('ParentSignatureInformedConsent64', $signatureConsent);
-				$edit->setField('ParentSignatureMedicalRelease64', $signatureMedical);
-				$edit->setField('PlayerSigConduct64', $sigConductPlayer);
-				$edit->setField('ParentSigConduct64', $sigConductParent);
-				$edit->setField('ParentSigMediaRelease64', $sigMediaRelease);
+				$edit->setField('SignatureInformedConsent64', $signatureConsent);
+				$edit->setField('SignatureMedicalRelease64', $signatureMedical);
+				$edit->setField('SignatureConductPlayer64', $sigConductPlayer);
+				$edit->setField('SignatureConductParent64', $sigConductParent);
+				$edit->setField('SignatureMediaRelease64', $sigMediaRelease);
 			}
 			$result = $edit->execute();
 			if (FileMaker::isError($result)) {
