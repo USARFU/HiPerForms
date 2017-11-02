@@ -224,12 +224,12 @@ if ($skip != 1 && empty($IDType)) {
 			} else if ($response->declined) {
 				// Transaction declined. Set our error message.
 				$error = 'Your credit card was declined by your bank. Please try another form of payment.';
-				header('Location: camp/Payment.php?ID=' . $ID . '&error=' . $error);
+				header('Location: Payment.php?ID=' . $ID . '&error=' . $error);
 				exit();
 			} else {
 				// And error has occurred. Set our error message.
 				$error = 'We encountered an error while processing your payment. Your credit card was not charged. Please try again.';
-				header('Location: camp/Payment.php?ID=' . $ID . '&response_reason_text=' . $response->response_reason_text);
+				header('Location: Payment.php?ID=' . $ID . '&response_reason_text=' . $response->response_reason_text);
 
 				exit();
 			}

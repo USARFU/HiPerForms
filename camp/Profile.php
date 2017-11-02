@@ -1169,19 +1169,41 @@
 	$clothingSizeValues = $layout->getValueListTwoFields('Size');
 	$stateValues = $layout->getValueListTwoFields('State');
 	$countryValues = $layout->getValueListTwoFields('World Countries');
-	if ($playerLevel == "High School" || $playerLevel == "HSAA" || $playerLevel == "Youth" || $U18AtStartOfEvent) {
-		if ($gender == "Female" || $gender == "Women") {
-			$clubValues = $layout->getValueListTwoFields('PHPClubsYouthWomen');
-		} else {
-			$clubValues = $layout->getValueListTwoFields('PHPClubsYouthMen');
-		}
-	} else {
-		if ($gender == "Female" || $gender == "Women") {
-			$clubValues = $layout->getValueListTwoFields('PHPClubsNonYouthWomen');
-		} else {
-			$clubValues = $layout->getValueListTwoFields('PHPClubsNonYouthMen');
-		}
+//	if ($playerLevel == "High School" || $playerLevel == "HSAA" || $playerLevel == "Youth" || $U18AtStartOfEvent) {
+//		if ($gender == "Female" || $gender == "Women") {
+//			$clubValues = $layout->getValueListTwoFields('PHPClubsYouthWomen');
+//		} else {
+//			$clubValues = $layout->getValueListTwoFields('PHPClubsYouthMen');
+//		}
+//	} else {
+//		if ($gender == "Female" || $gender == "Women") {
+//			$clubValues = $layout->getValueListTwoFields('PHPClubsNonYouthWomen');
+//		} else {
+//			$clubValues = $layout->getValueListTwoFields('PHPClubsNonYouthMen');
+//		}
+//	}
+	
+	// workaround FM update breaking relational filter of value lists
+	// make your own array instead of using getValueTwoFields
+	$requestClubVL = $fm->newFindCommand('PHP-ClubSearch');
+	$requestClubVL->addFindCriterion('InvitationalFlag', '=');
+	$requestClubVL->addFindCriterion('ID', '*');
+	
+	$resultClubVL = $requestClubVL->execute();
+	if (FileMaker::isError($resultClubVL)) {
+		echo "<p>Error: There was a problem processing your information. Please send a note to tech@hiperforms.com with the following information so they can review your record: </p>"
+			. "<p>Error Code 1301: " . $resultClubVL->getMessage() . "</p>";
+		die();
 	}
+	$recordsClubVL = $resultClubVL->getRecords();
+	
+	$clubValues = array();
+	
+	foreach ($recordsClubVL as $recordClubVL) {
+		$clubValues[$recordClubVL->getField('ID')] = $recordClubVL->getField('c_clubNameLong');
+	}
+//	$EventPersonnelRecordID = $record->getRecordId();
+//	$clubValues = $layout->getValueListTwoFields('PHPClubs',$EventPersonnelRecordID);
 	asort($clubValues);
 	$airportValues = $layout->getValueListTwoFields('PHPAirportNameCode');
 	asort($airportValues);
@@ -1990,17 +2012,14 @@ if (!empty($fail) && isset($_POST['respondent_exists'])) {
 			<div id="YesClubFields" class="rightcolumn">
 				<div style="display: inline-block;"
 					  class="<?php if (empty($ID_Club) && empty($UnlistedClub_flag) && empty($DoNotBelongToAClub_flag)) {
-						  $ID_Club_a = " ";
 						  echo 'missing';
-					  } else {
-						  $ID_Club_a = $ID_Club;
 					  } ?>">
 					<select name="ID_Club" size="1" class="select2" id="PrimaryClub"
 							  title="The Primary Club you play for.">
 						<option value="">&nbsp;</option>
 						<?php
 						foreach ($clubValues as $key => $clubValue) {
-							echo "<option value='" . $key . "' " . ($ID_Club_a == $key ? "selected='selected'>" : ">") . $clubValue . "</option>";
+							echo "<option value='" . $key . "' " . ($ID_Club == $key ? "selected='selected'>" : ">") . $clubValue . "</option>";
 						}
 						?>
 					</select>
