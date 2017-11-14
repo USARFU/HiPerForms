@@ -13,13 +13,13 @@
       <div style="width: 96%; display: block; margin-left: auto; margin-right: auto;">
          <h3>Informed Consent and Acknowledgment</h3>
          <p>
-            I hereby give my approval for my child's participation in any and all activities prepared by USA Rugby during the camp, tour or asssembly. 
+            I hereby give my approval for my child's participation in any and all activities prepared by USA Rugby during the camp, tour or assembly.
             In exchange for the acceptance of said child’s candidacy by USA Rugby, I assume all risk and hazards incidental to the conduct of the activities, 
             and release, absolve and hold harmless USA Rugby and all its respective officers, agents, and representatives from any and all liability for injuries 
             to said child arising out of traveling to, participating in, or returning from selected USA Rugby All-American assemblies.
          </p>
          <p>
-            In case of injury to said child, I hereby waive all claims against USA Rugby. including all coaches and affiliates, all participants, sponsoring agencies, 
+            In case of injury to said child, I hereby waive all claims against USA Rugby, including all coaches and affiliates, all participants, sponsoring agencies,
             advertisers, and, if applicable, owners and lessors of premises used to conduct the event. There is a risk of being injured that is inherent in all sports activities, 
             including rugby. Some of these injuries include, but are not limited to, the risk of fractures, paralysis, or death.
          </p>
@@ -62,7 +62,7 @@
             to contact me in the most expeditious way possible. This authorization is granted only after a reasonable effort has been made to reach me.
          </p>
          <p>
-            Permission is also granted to the USA Rugby. and its affiliates including coaches, 
+            Permission is also granted to USA Rugby and its affiliates including coaches,
             trainers and medical staff to provide the needed emergency treatment prior to the child’s admission to the medical facility.
          </p>
          <p>
