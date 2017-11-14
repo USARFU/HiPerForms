@@ -1117,7 +1117,7 @@ if (isset($message_profile)) {
 			<div class="input">
 				<label for="slim-ProofOfSchool">Proof of School Enrollment
 					<?php
-					if (1) {
+					if (0) {
 						echo "<span class='";
 						if (empty($ProofOfSchool64) && empty($ProofOfSchoolCropPath)) {
 							echo "mandatoryFailed";

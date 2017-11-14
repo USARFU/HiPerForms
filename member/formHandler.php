@@ -1227,9 +1227,9 @@ if (isset($_POST['submitted-profile'])) {
 		$name_school = $image_school['output']['name'];
 		$data_school = $image_school['output']['data'];
 		
-		if (empty($ProofOfSchool64) && empty($name_school) && $IsPlayer && $U18) {
-			$fail .= "Your Proof of School attendance is required. <br />";
-		}
+//		if (empty($ProofOfSchool64) && empty($name_school) && $IsPlayer && $U18) {
+//			$fail .= "Your Proof of School attendance is required. <br />";
+//		}
 		
 		// store the file
 		if (!empty($name_school)) {
